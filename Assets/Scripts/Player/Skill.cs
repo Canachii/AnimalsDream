@@ -19,7 +19,7 @@ public abstract class Skill : MonoBehaviour
     {
         if (!CanUse())
         {
-            Debug.Log("스킬 쿨타임 중");
+            Debug.Log("Cool down");
             return false;
         }
 
