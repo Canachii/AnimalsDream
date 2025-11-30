@@ -11,25 +11,32 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpHeight = 5f;
     public float rotationSpeed = 10f;
-    [SerializeField] private float groundCheckDistance = 0.1f;
+    [SerializeField] private float groundCheckDistance = 0.3f;
     [SerializeField] private LayerMask groundMask;
+
+    private Skill skill;
 
     [Header("Camera")]
     [SerializeField] private Transform camTransform;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>(); 
+        rb = GetComponent<Rigidbody>();
+        skill = GetComponent<Skill>();
     }
 
     private void FixedUpdate()
     {
         Vector3 move = GetCameraRelativeMoveDirection();
+        float moveSqrMag = move.sqrMagnitude;
 
-        if (move.sqrMagnitude > 1f)
+        if (moveSqrMag > 1f)
+        {
             move.Normalize();
+            moveSqrMag = 1f; 
+        }
 
-        if (move.sqrMagnitude > 0.0001f)
+        if (moveSqrMag > 0.0001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(move, Vector3.up);
 
@@ -77,13 +84,13 @@ public class PlayerController : MonoBehaviour
             Vector3 v = rb.linearVelocity;
             v.y = jumpHeight;
             rb.linearVelocity = v;
-            isGrounded = false;
         }
     }
 
     public void OnUseSkill(InputValue value)
     {
-        Debug.Log("UseSkill");
+        if (!value.isPressed) return;
+        skill.TryUse(this);
     }
 
 }

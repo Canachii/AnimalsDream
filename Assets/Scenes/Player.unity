@@ -1314,6 +1314,7 @@ GameObject:
   - component: {fileID: 2146367086}
   - component: {fileID: 2146367087}
   - component: {fileID: 2146367084}
+  - component: {fileID: 2146367088}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1438,6 +1439,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &2146367088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146367081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ade7cd74671bb44b766e2a75f344d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestSkill
+  skillName: TestSkill
+  icon: {fileID: 0}
+  cooldown: 1
+  description: "\uD14C\uC2A4\uD2B8 \uC2A4\uD0AC\uC774\uB2E4."
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
