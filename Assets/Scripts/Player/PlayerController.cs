@@ -1,12 +1,20 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
     private Vector2 inputVec2;
     private Rigidbody rb;
     private bool isGrounded = true;
-    
+    private Animator animator;
+
+    private static readonly int SpeedHash = Animator.StringToHash("speed");
+    private static readonly int IsGroundedHash = Animator.StringToHash("isGrounded");
+    private static readonly int JumpHash = Animator.StringToHash("jump");
+
     [Header ("Movement")]
     public float moveSpeed = 5f;
     public float jumpHeight = 5f;
@@ -23,6 +31,14 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         skill = GetComponent<Skill>();
+        animator = GetComponent<Animator>();    
+    }
+
+    private void Update()
+    {
+        float speed = inputVec2.magnitude;
+        animator.SetFloat(SpeedHash, speed, 0.1f, Time.deltaTime);
+        animator.SetBool(IsGroundedHash, isGrounded);
     }
 
     private void FixedUpdate()
@@ -78,12 +94,16 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if(isGrounded)
+        //if (!value.isPressed) return;
+
+        if (isGrounded)
         {
             //rb.AddForce(Vector3.up * jumpHeight, ForceMode.VelocityChange);
             Vector3 v = rb.linearVelocity;
             v.y = jumpHeight;
             rb.linearVelocity = v;
+
+            animator.SetTrigger(JumpHash);
         }
     }
 
