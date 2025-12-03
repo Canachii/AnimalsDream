@@ -94,11 +94,10 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        //if (!value.isPressed) return;
+        if (!value.isPressed) return;
 
         if (isGrounded)
         {
-            //rb.AddForce(Vector3.up * jumpHeight, ForceMode.VelocityChange);
             Vector3 v = rb.linearVelocity;
             v.y = jumpHeight;
             rb.linearVelocity = v;
