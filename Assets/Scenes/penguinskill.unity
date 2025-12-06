@@ -275,7 +275,7 @@ MonoBehaviour:
   cooldown: 1
   description: 
   slowRatio: 0.5
-  duration: 4
+  duration: 5
   blizzardEffectPrefab: {fileID: 1920325297268671343, guid: 889dd67908ff48640a817f0b0074814e, type: 3}
 --- !u!1001 &1455966690
 PrefabInstance:
