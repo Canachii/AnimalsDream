@@ -9,10 +9,7 @@ public abstract class TrapController : MonoBehaviour
 
     [Header("Knockback")]
     [SerializeField] protected float knockbackForce = 20f;
-    [SerializeField] protected float knockbackDuration = 0.3f;
     [SerializeField] protected float upForce = 5f;
-
-    private string target = "Player";
 
     protected Collider trapCollider;
     protected Renderer trapRenderer;
@@ -72,23 +69,6 @@ public abstract class TrapController : MonoBehaviour
     protected abstract void OnActivate();
     protected abstract void OnDeactivate();
 
-    protected virtual void OnTriggerStay(Collider other)
-    {
-        if (isActive && other.CompareTag(target))
-        {
-            Rigidbody rb = other.attachedRigidbody;
-            if(rb == null) return;
+    protected virtual void OnTriggerStay(Collider other) { }
 
-            Debug.Log($"{gameObject.name}함정 발동");
-
-            Vector3 dir = (other.transform.position - transform.position).normalized;
-            dir.y = 0f;
-            dir = dir.normalized;
-
-            Vector3 forceDir = dir * knockbackForce + Vector3.up * upForce;
-            rb.AddForce(forceDir);
-
-            Debug.Log("넉백 적용");
-        }
-    }
 }
