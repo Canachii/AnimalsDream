@@ -7,6 +7,11 @@ public abstract class TrapController : MonoBehaviour
     [SerializeField] protected float trapTimer = 5f;
     [SerializeField] protected float trapDuration = 3f;
 
+    [Header("Knockback")]
+    [SerializeField] protected float knockbackForce = 20f;
+    [SerializeField] protected float knockbackDuration = 0.3f;
+    [SerializeField] protected float upForce = 5f;
+
     private string target = "Player";
 
     protected Collider trapCollider;
@@ -19,7 +24,7 @@ public abstract class TrapController : MonoBehaviour
         trapCollider = GetComponent<Collider>();
         trapRenderer = GetComponent<Renderer>();
 
-        if( trapCollider != null )
+        if (trapCollider != null)
         {
             trapCollider.enabled = false;
         }
@@ -51,7 +56,7 @@ public abstract class TrapController : MonoBehaviour
 
         GetComponent<Renderer>().material.color = Color.red;
 
-        Debug.Log($"[{gameObject.name}] »∞º∫»≠");
+        Debug.Log($"[{gameObject.name}] ÌôúÏÑ±Ìôî");
     }
 
     private void DeactivateTrap()
@@ -61,17 +66,29 @@ public abstract class TrapController : MonoBehaviour
 
         GetComponent<Renderer>().material.color = Color.gray;
 
-        Debug.Log($"[{gameObject.name}] ∫Ò»∞º∫»≠");
+        Debug.Log($"[{gameObject.name}] ÎπÑÌôúÏÑ±Ìôî");
     }
 
     protected abstract void OnActivate();
     protected abstract void OnDeactivate();
 
-    protected virtual void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerStay(Collider other)
     {
-        if(isActive && other.CompareTag(target))
+        if (isActive && other.CompareTag(target))
         {
-            Debug.Log($"{gameObject.name}«‘¡§ πﬂµø");
+            Rigidbody rb = other.attachedRigidbody;
+            if(rb == null) return;
+
+            Debug.Log($"{gameObject.name}Ìï®Ï†ï Î∞úÎèô");
+
+            Vector3 dir = (other.transform.position - transform.position).normalized;
+            dir.y = 0f;
+            dir = dir.normalized;
+
+            Vector3 forceDir = dir * knockbackForce + Vector3.up * upForce;
+            rb.AddForce(forceDir);
+
+            Debug.Log("ÎÑâÎ∞± Ï†ÅÏö©");
         }
     }
 }

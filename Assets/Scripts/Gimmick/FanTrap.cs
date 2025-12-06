@@ -17,8 +17,8 @@ public class FanTrap : TrapController
         base.Start();
     }
 
-    protected override void OnTriggerEnter(Collider other)
+    protected override void OnTriggerStay(Collider other)
     {
-        base.OnTriggerEnter(other);
+        base.OnTriggerStay(other);
     }
 }
