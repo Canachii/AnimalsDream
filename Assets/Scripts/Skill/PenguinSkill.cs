@@ -26,11 +26,13 @@ public class PenguinSkill : Skill
 
     private IEnumerator ApplySlowAndEffect(PlayerController target)
     {
+        PlayerMovement movement = target.GetComponent<PlayerMovement>();
+
         // player speed save
-        float originalSpeed = target.moveSpeed;
+        float originalSpeed = movement.moveSpeed;
 
         // slow activating
-        target.moveSpeed = originalSpeed * slowRatio;
+        movement.moveSpeed = originalSpeed * slowRatio;
         Debug.Log($"Target {target.name} Speed Slowed");
 
         // effect on
@@ -47,7 +49,7 @@ public class PenguinSkill : Skill
         // saved speed on
         if (target != null)
         {
-            target.moveSpeed = originalSpeed;
+            movement.moveSpeed = originalSpeed;
             Debug.Log($"Target {target.name} Speed Restored");
         }
 

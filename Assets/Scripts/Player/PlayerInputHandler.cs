@@ -19,7 +19,10 @@ public class PlayerInputHandler : MonoBehaviour
         skill1Pressed = false;  
         skill2Pressed = false;
     }
-
+    private void LateUpdate()
+    {
+        ResetFrameInputFlags();
+    }
 
     //input Key: 
     public void OnMove(InputValue value)
@@ -31,7 +34,7 @@ public class PlayerInputHandler : MonoBehaviour
     public void OnJump(InputValue value)
     {
         if (!value.isPressed) return;
-        jumpPressed =true;
+        jumpPressed = true;
     }
 
     //input Key: Q

@@ -1194,6 +1194,9 @@ GameObject:
   - component: {fileID: 3143458541727367902}
   - component: {fileID: 7424239596820491614}
   - component: {fileID: 7776318975018326873}
+  - component: {fileID: 7623016409226855487}
+  - component: {fileID: 2282844488102703697}
+  - component: {fileID: 3750382282183093084}
   - component: {fileID: 3653743199480069864}
   - component: {fileID: 1496240067084777393}
   m_Layer: 0
@@ -1312,7 +1315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4034431347
+  GlobalObjectIdHash: 809249899
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1405,17 +1408,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5423a80a269be48b519205c4a02144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+--- !u!114 &7623016409226855487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e37c52f9e8329449c3ed81deb53de7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 5
   jumpHeight: 5
   rotationSpeed: 10
-  groundCheckDistance: 0.2
+  groundCheckDistance: 0.3
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  camTransform: {fileID: 0}
+--- !u!114 &2282844488102703697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaa619197b77df04b930b6453afde2a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
+--- !u!114 &3750382282183093084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3edcacd922ddff047884bad058735237, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSkillController
   skills:
   - {fileID: 3653743199480069864}
   - {fileID: 1496240067084777393}
-  camTransform: {fileID: 0}
 --- !u!114 &3653743199480069864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1434,7 +1473,7 @@ MonoBehaviour:
   description: 
   slowRatio: 0.5
   duration: 4
-  blizzardEffectPrefab: {fileID: 0}
+  blizzardEffectPrefab: {fileID: 1920325297268671343, guid: 889dd67908ff48640a817f0b0074814e, type: 3}
   effectScale: 2
 --- !u!114 &1496240067084777393
 MonoBehaviour:

@@ -93,7 +93,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump()
     {
-
         if (IsGrounded)
         {
             Vector3 v = rb.linearVelocity;

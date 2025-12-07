@@ -17,17 +17,19 @@ public class PlayerController : MonoBehaviour
         movement = GetComponent<PlayerMovement>();
         skillController = GetComponent<PlayerSkillController>();
         input = GetComponent<PlayerInputHandler>();
+        if (movement == null || skillController == null || input == null)
+        {
+            Debug.LogError($"[{name}] PlayerController is missing required components.");
+            enabled = false;
+        }
     }
 
 
     private void Update()
     {
-        if (movement == null || input == null || skillController == null)
-            return;
-
         movement.SetMoveInput(input.MoveInput);
 
-        if (input.JumpPressed) 
+        if (input.JumpPressed)
             movement.Jump();
 
         if (input.Skill1Pressed)
