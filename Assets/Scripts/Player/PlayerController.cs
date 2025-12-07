@@ -87,11 +87,13 @@ public class PlayerController : MonoBehaviour
         return forward * inputVec2.y + right * inputVec2.x;
     }
 
+    //input Key: WASD
     public void OnMove(InputValue value)
     {
         inputVec2 = value.Get<Vector2>();
     }
 
+    //input Key: Space
     public void OnJump(InputValue value)
     {
         if (!value.isPressed) return;
@@ -116,11 +118,14 @@ public class PlayerController : MonoBehaviour
         skill.TryUse(this);
     }
 
+    //input Key: Q
     public void OnUseSkill1(InputValue value)
     {
         if (!value.isPressed) return;
         TryUseSkill(0);
     }
+
+    //input Key: LeftShift
     public void OnUseSkill2(InputValue value)
     {
         if (!value.isPressed) return;
