@@ -25,9 +25,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "UseSkill",
+                    "name": "UseSkill1",
                     "type": "Button",
                     "id": "9d9789ef-98cb-432a-9519-fb1c415fd28a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UseSkill2",
+                    "type": "Button",
+                    "id": "1b1af01a-d39f-44f0-9b1b-783b873ddc9b",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -53,7 +62,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSkill",
+                    "action": "UseSkill1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -111,6 +120,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "e499d652-7e32-4534-bb27-066eddda8811",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseSkill2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

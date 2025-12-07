@@ -22,7 +22,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundCheckDistance = 0.3f;
     [SerializeField] private LayerMask groundMask;
 
-    private Skill skill;
+    [Header("Skills")]
+    [SerializeField] private Skill[] skills;
 
     [Header("Camera")]
     [SerializeField] private Transform camTransform;
@@ -30,7 +31,6 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        skill = GetComponent<Skill>();
         animator = GetComponent<Animator>();    
     }
 
@@ -106,10 +106,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnUseSkill(InputValue value)
+    public void TryUseSkill(int index)
+    {
+        if(skills == null|| skills.Length == 0) return;
+        
+        Skill skill = skills[index];
+        if (skill == null) return;
+
+        skill.TryUse(this);
+    }
+
+    public void OnUseSkill1(InputValue value)
     {
         if (!value.isPressed) return;
-        skill.TryUse(this);
+        TryUseSkill(0);
+    }
+    public void OnUseSkill2(InputValue value)
+    {
+        if (!value.isPressed) return;
+        TryUseSkill(1);
     }
 
 }

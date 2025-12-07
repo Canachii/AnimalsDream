@@ -1190,11 +1190,12 @@ GameObject:
   - component: {fileID: 7319014068665885553}
   - component: {fileID: 5030872112117289148}
   - component: {fileID: 8514787789702319870}
-  - component: {fileID: 7776318975018326873}
-  - component: {fileID: 1496240067084777393}
   - component: {fileID: 5968552877439206440}
   - component: {fileID: 3143458541727367902}
   - component: {fileID: 7424239596820491614}
+  - component: {fileID: 7776318975018326873}
+  - component: {fileID: 3653743199480069864}
+  - component: {fileID: 1496240067084777393}
   m_Layer: 0
   m_Name: Penguin
   m_TagString: Player
@@ -1299,42 +1300,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &7776318975018326873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7352763928063775421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c5423a80a269be48b519205c4a02144, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 5
-  jumpHeight: 5
-  rotationSpeed: 10
-  groundCheckDistance: 0.2
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  camTransform: {fileID: 0}
---- !u!114 &1496240067084777393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7352763928063775421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ade7cd74671bb44b766e2a75f344d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestSkill
-  skillName: TestSkill
-  icon: {fileID: 0}
-  cooldown: 1
-  description: "\uD14C\uC2A4\uD2B8 \uC2A4\uD0AC\uC774\uB2E4."
 --- !u!114 &5968552877439206440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1347,7 +1312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 172890062
+  GlobalObjectIdHash: 4034431347
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1428,6 +1393,65 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7776318975018326873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5423a80a269be48b519205c4a02144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  moveSpeed: 5
+  jumpHeight: 5
+  rotationSpeed: 10
+  groundCheckDistance: 0.2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 64
+  skills:
+  - {fileID: 3653743199480069864}
+  - {fileID: 1496240067084777393}
+  camTransform: {fileID: 0}
+--- !u!114 &3653743199480069864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a68960a19fce61468b014523e3eea29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PenguinSkill
+  skillName: 
+  icon: {fileID: 0}
+  cooldown: 1
+  description: 
+  slowRatio: 0.5
+  duration: 4
+  blizzardEffectPrefab: {fileID: 0}
+  effectScale: 2
+--- !u!114 &1496240067084777393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ade7cd74671bb44b766e2a75f344d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestSkill
+  skillName: TestSkill
+  icon: {fileID: 0}
+  cooldown: 1
+  description: "\uD14C\uC2A4\uD2B8 \uC2A4\uD0AC\uC774\uB2E4."
 --- !u!1 &8156699869588700837
 GameObject:
   m_ObjectHideFlags: 0
