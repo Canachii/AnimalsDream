@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpHeight = 5f;
     public float rotationSpeed = 10f;
+    private float baseMoveSpeed = 5f;
     [SerializeField] private float groundCheckDistance = 0.3f;
     [SerializeField] private LayerMask groundMask;
 
@@ -31,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        baseMoveSpeed = moveSpeed;
     }
 
     public void SetMoveInput(Vector2 input)
@@ -102,6 +104,11 @@ public class PlayerMovement : MonoBehaviour
             animator.SetTrigger(JumpHash);
         }
 
+    }
+
+    public void SetMoveSpeedMultiplier(float multiplier)
+    {
+        moveSpeed = baseMoveSpeed * multiplier;
     }
 
 }
