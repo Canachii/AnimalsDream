@@ -5,7 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(PlayerController))]
 public class DummyAutoMove : MonoBehaviour
 {
-    private PlayerController targetController;
+    private PlayerMovement targetMovement;
     private Rigidbody rb;
     private Vector3 moveDirection;
 
@@ -14,7 +14,7 @@ public class DummyAutoMove : MonoBehaviour
 
     void Start()
     {
-        targetController = GetComponent<PlayerController>();
+        targetMovement = GetComponent<PlayerMovement>();
         rb = GetComponent<Rigidbody>();
 
         StartCoroutine(ChangeDirectionRoutine());
@@ -22,7 +22,7 @@ public class DummyAutoMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        float currentSpeed = targetController.moveSpeed;
+        float currentSpeed = targetMovement.moveSpeed;
 
         Vector3 moveStep = moveDirection * currentSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + moveStep);
