@@ -7,10 +7,6 @@ public abstract class TrapController : MonoBehaviour
     [SerializeField] protected float trapTimer = 5f;
     [SerializeField] protected float trapDuration = 3f;
 
-    [Header("Knockback")]
-    [SerializeField] protected float knockbackForce = 20f;
-    [SerializeField] protected float upForce = 5f;
-
     protected Collider trapCollider;
     protected Renderer trapRenderer;
     protected bool isActive = false;
