@@ -12,8 +12,16 @@ public class PenguinSkill : Skill
     [Min(0f)]
     public float duration = 4f;
 
-    [Tooltip("Effect prefab activation")]
     public GameObject blizzardEffectPrefab;
+    public float effectScale = 2.0f;
+
+    private void OnValidate()
+    {
+        if (cooldown <= duration)
+        {
+            cooldown = duration + 5.0f;
+        }
+    }
 
     protected override void OnUse(PlayerController user)
     {
@@ -32,7 +40,7 @@ public class PenguinSkill : Skill
 
     private IEnumerator ApplySlowSafely(PlayerMovement target)
     {
-        //  Apply slow effect
+        // Apply slow effect
         target.SetMoveSpeedMultiplier(slowRatio);
 
         // Spawn effect
@@ -40,18 +48,19 @@ public class PenguinSkill : Skill
         if (blizzardEffectPrefab != null)
         {
             activeEffect = Instantiate(blizzardEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
+            activeEffect.transform.localScale = Vector3.one * effectScale;
         }
 
-        //Wait for duration
+        // Wait for duration
         yield return new WaitForSeconds(duration);
 
-        //Reset multiplier
+        // Restore speed
         if (target != null)
         {
             target.SetMoveSpeedMultiplier(1.0f);
         }
 
-        //Remove effect
+        // Remove effect
         if (activeEffect != null)
         {
             ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();
