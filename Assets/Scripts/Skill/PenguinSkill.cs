@@ -3,61 +3,58 @@ using System.Collections;
 
 public class PenguinSkill : Skill
 {
-    [Header("Penguin Specific Settings")]
+    [Header("Penguin Settings")]
+    [Tooltip("Speed multiplier (0.5 = 50% speed)")]
+    [Range(0f, 1f)]
     public float slowRatio = 0.5f;
+
+    [Tooltip("Duration (seconds)")]
+    [Min(0f)]
     public float duration = 4f;
+
+    [Tooltip("Effect prefab activation")]
     public GameObject blizzardEffectPrefab;
-    public float effectScale = 2.0f;
 
     protected override void OnUse(PlayerController user)
     {
-        Debug.Log("Skill Activated");
+        Debug.Log($"Skill Activated: {skillName}");
 
-        PlayerController[] allPlayers = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
+        PlayerMovement[] allMovements = FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None);
 
-        foreach (PlayerController target in allPlayers)
+        foreach (PlayerMovement target in allMovements)
         {
-            if (target != user)
+            if (target != user.GetComponent<PlayerMovement>())
             {
-                StartCoroutine(ApplySlowAndEffect(target));
+                StartCoroutine(ApplySlowSafely(target));
             }
         }
     }
 
-    private IEnumerator ApplySlowAndEffect(PlayerController target)
+    private IEnumerator ApplySlowSafely(PlayerMovement target)
     {
-        PlayerMovement movement = target.GetComponent<PlayerMovement>();
+        //  Apply slow effect
+        target.SetMoveSpeedMultiplier(slowRatio);
 
-        // player speed save
-        float originalSpeed = movement.moveSpeed;
-
-        // slow activating
-        movement.moveSpeed = originalSpeed * slowRatio;
-        Debug.Log($"Target {target.name} Speed Slowed");
-
-        // effect on
+        // Spawn effect
         GameObject activeEffect = null;
         if (blizzardEffectPrefab != null)
         {
-            // effect prefab Instantiate
             activeEffect = Instantiate(blizzardEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
-            activeEffect.transform.localScale = Vector3.one * effectScale;
         }
 
+        //Wait for duration
         yield return new WaitForSeconds(duration);
 
-        // saved speed on
+        //Reset multiplier
         if (target != null)
         {
-            movement.moveSpeed = originalSpeed;
-            Debug.Log($"Target {target.name} Speed Restored");
+            target.SetMoveSpeedMultiplier(1.0f);
         }
 
-        // effect deleted
+        //Remove effect
         if (activeEffect != null)
         {
             ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();
-
             if (ps != null)
             {
                 ps.Stop();
