@@ -12,7 +12,7 @@ public class PenguinSkill : Skill
     [Min(0f)]
     public float duration = 4f;
 
-    public GameObject blizzardEffectPrefab;
+    public GameObject slowEffectPrefab;
     public float effectScale = 2.0f;
 
     private void OnValidate()
@@ -45,9 +45,9 @@ public class PenguinSkill : Skill
 
         // Spawn effect
         GameObject activeEffect = null;
-        if (blizzardEffectPrefab != null)
+        if (slowEffectPrefab != null)
         {
-            activeEffect = Instantiate(blizzardEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
+            activeEffect = Instantiate(slowEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
             activeEffect.transform.localScale = Vector3.one * effectScale;
         }
 
