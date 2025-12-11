@@ -11,6 +11,7 @@ public abstract class TrapController : MonoBehaviour
     protected Renderer trapRenderer;
     protected bool isActive = false;
 
+    protected string target = "Player";
 
     protected virtual void Start()
     {
@@ -47,8 +48,9 @@ public abstract class TrapController : MonoBehaviour
         }
         trapCollider.enabled = true;
 
-        GetComponent<Renderer>().material.color = Color.red;
+        trapRenderer.material.color = Color.red;
 
+        OnActivate();
         Debug.Log($"[{gameObject.name}] 활성화");
     }
 
@@ -57,8 +59,9 @@ public abstract class TrapController : MonoBehaviour
         isActive = false;
         trapCollider.enabled = false;
 
-        GetComponent<Renderer>().material.color = Color.gray;
+        trapRenderer.material.color = Color.gray;
 
+        OnDeactivate();
         Debug.Log($"[{gameObject.name}] 비활성화");
     }
 
@@ -66,5 +69,6 @@ public abstract class TrapController : MonoBehaviour
     protected abstract void OnDeactivate();
 
     protected virtual void OnTriggerStay(Collider other) { }
+    protected virtual void OnTriggerEnter(Collider other) { }
 
 }

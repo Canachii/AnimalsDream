@@ -6,8 +6,6 @@ public class FanTrap : TrapController
     [SerializeField] private float knockbackForce = 20f;
     [SerializeField] private float upForce = 5f;
 
-    private string target = "Player";
-
     protected override void OnActivate()
     {
 
