@@ -383,6 +383,10 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3630983130738417110, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6100407400656749137, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
       propertyPath: playOnAwake
       value: 0
@@ -598,6 +602,7 @@ MonoBehaviour:
   trapTimer: 5
   trapDuration: 3
   _particleSystem: {fileID: 977932270}
+  _audioSource: {fileID: 1764952381}
 --- !u!1 &1052012123
 GameObject:
   m_ObjectHideFlags: 0
@@ -992,6 +997,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00ebed1418911e447999328c08907025, type: 3}
+--- !u!82 &1764952381 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3630983130738417110, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
+  m_PrefabInstance: {fileID: 977932266}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
