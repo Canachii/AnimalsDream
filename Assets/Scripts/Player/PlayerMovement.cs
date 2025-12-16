@@ -106,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    public void SetMoveSpeedMultiplier(float multiplier)
+    public void SetMoveSpeedMultiplier(float multiplier) // player default speed * multiplier
     {
         moveSpeed = baseMoveSpeed * multiplier;
     }

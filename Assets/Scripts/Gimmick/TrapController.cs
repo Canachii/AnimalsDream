@@ -3,12 +3,9 @@ using UnityEngine;
 
 public abstract class TrapController : MonoBehaviour
 {
-    [Header("Timer")]
-    [SerializeField] protected float trapTimer = 5f;
-    [SerializeField] protected float trapDuration = 3f;
-
     protected Collider trapCollider;
     protected Renderer trapRenderer;
+    //protected Color originColor;
     protected bool isActive = false;
 
     protected string target = "Player";
@@ -18,7 +15,7 @@ public abstract class TrapController : MonoBehaviour
         trapCollider = GetComponent<Collider>();
         trapRenderer = GetComponent<Renderer>();
 
-        if (trapCollider != null)
+        if( trapCollider != null )
         {
             trapCollider.enabled = false;
         }
@@ -30,11 +27,11 @@ public abstract class TrapController : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(trapTimer);
+            yield return new WaitForSeconds(5f);
 
             ActivateTrap();
 
-            yield return new WaitForSeconds(trapDuration);
+            yield return new WaitForSeconds(3f);
 
             DeactivateTrap();
         }
@@ -42,10 +39,6 @@ public abstract class TrapController : MonoBehaviour
 
     private void ActivateTrap()
     {
-        if (!isActive)
-        {
-            isActive = true;
-        }
         trapCollider.enabled = true;
 
         trapRenderer.material.color = Color.red;
@@ -56,7 +49,6 @@ public abstract class TrapController : MonoBehaviour
 
     private void DeactivateTrap()
     {
-        isActive = false;
         trapCollider.enabled = false;
 
         trapRenderer.material.color = Color.gray;
