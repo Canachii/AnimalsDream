@@ -36,6 +36,7 @@ public class PlayerInputHandler : MonoBehaviour
         if (gameFlow != null)
         {
             gameFlow.OnMatchStarted += UnlockGameplayInput;
+            gameFlow.OnMatchFinished += LockGameplayInput;
             gameFlow.OnReachedGollLine += LockGameplayInput;
         }
     }
@@ -45,6 +46,7 @@ public class PlayerInputHandler : MonoBehaviour
         if (gameFlow != null)
         {
             gameFlow.OnMatchStarted -= UnlockGameplayInput;
+            gameFlow.OnMatchFinished -= LockGameplayInput;
             gameFlow.OnReachedGollLine -= LockGameplayInput;
         }
     }
