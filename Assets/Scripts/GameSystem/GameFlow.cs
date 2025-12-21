@@ -43,7 +43,7 @@ public class GameFlow : MonoBehaviour
 
         while(sec > 0)
         {
-            Debug.Log(sec+"초");
+            //Debug.Log(sec+"초");
             OnCountdownTick?.Invoke(sec);
             yield return new WaitForSeconds(1f);
             sec--;
@@ -58,6 +58,7 @@ public class GameFlow : MonoBehaviour
     {
         if(State != MatchState.Playing) return; 
         SetState(MatchState.Finished);
+        Debug.Log("게임 종료");
         OnMatchFinished?.Invoke();
     }
     public void SetState(MatchState next)

@@ -616,6 +616,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: -1
+  finishTime: 0
+  finished: 0
 --- !u!1 &741049796
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,8 +629,9 @@ GameObject:
   - component: {fileID: 741049797}
   - component: {fileID: 741049798}
   - component: {fileID: 741049799}
+  - component: {fileID: 741049800}
   m_Layer: 0
-  m_Name: CheckPoint (5)
+  m_Name: GollLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -684,6 +687,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CheckPoint
   raceManager: {fileID: 2097746172}
   index: 5
+--- !u!114 &741049800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741049796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30d3e73a1bc827f4f9b643583c2eb84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GollLine
+  raceManager: {fileID: 2097746172}
 --- !u!1 &852166283
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,9 +713,10 @@ GameObject:
   - component: {fileID: 852166286}
   - component: {fileID: 852166285}
   - component: {fileID: 852166284}
+  - component: {fileID: 852166289}
   m_Layer: 0
   m_Name: a (3)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -718,6 +735,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 3
+  finishTime: 0
+  finished: 0
 --- !u!136 &852166285
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -812,6 +831,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &852166289
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 852166283}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &890930084
 GameObject:
   m_ObjectHideFlags: 0
@@ -898,9 +944,10 @@ GameObject:
   - component: {fileID: 1204628772}
   - component: {fileID: 1204628771}
   - component: {fileID: 1204628770}
+  - component: {fileID: 1204628775}
   m_Layer: 0
   m_Name: a (4)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -919,6 +966,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 4
+  finishTime: 0
+  finished: 0
 --- !u!136 &1204628771
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1013,6 +1062,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1204628775
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204628769}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1262016508
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,9 +1135,10 @@ GameObject:
   - component: {fileID: 1372656766}
   - component: {fileID: 1372656765}
   - component: {fileID: 1372656764}
+  - component: {fileID: 1372656769}
   m_Layer: 0
   m_Name: a
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1080,6 +1157,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 0
+  finishTime: 0
+  finished: 0
 --- !u!136 &1372656765
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1174,6 +1253,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1372656769
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1372656763}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1618531138
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,9 +1876,10 @@ GameObject:
   - component: {fileID: 1860992873}
   - component: {fileID: 1860992872}
   - component: {fileID: 1860992871}
+  - component: {fileID: 1860992876}
   m_Layer: 0
   m_Name: a (2)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1791,6 +1898,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 2
+  finishTime: 0
+  finished: 0
 --- !u!136 &1860992872
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1885,6 +1994,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1860992876
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860992870}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &1932495475
 GameObject:
   m_ObjectHideFlags: 0
@@ -2040,6 +2176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a98b70253c1606429ac4489b42fb24e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RaceManager
+  gameFlow: {fileID: 225620811}
   checkPoint:
   - {fileID: 890930085}
   - {fileID: 478823930}
@@ -2047,6 +2184,7 @@ MonoBehaviour:
   - {fileID: 527459310}
   - {fileID: 1792572465}
   - {fileID: 741049797}
+  endDelaySeconds: 3
 --- !u!1 &2136709780
 GameObject:
   m_ObjectHideFlags: 0
@@ -2060,9 +2198,10 @@ GameObject:
   - component: {fileID: 2136709783}
   - component: {fileID: 2136709782}
   - component: {fileID: 2136709781}
+  - component: {fileID: 2136709786}
   m_Layer: 0
   m_Name: a (1)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2081,6 +2220,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 1
+  finishTime: 0
+  finished: 0
 --- !u!136 &2136709782
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2175,6 +2316,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &2136709786
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136709780}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1001 &7915214602347755150
 PrefabInstance:
   m_ObjectHideFlags: 0
