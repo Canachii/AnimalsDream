@@ -12,6 +12,8 @@ public class RelayManager : MonoBehaviour
 {
     public static RelayManager Instance;
 
+    private UnityTransport _unityTransport;
+
     private async void Awake()
     {
         if (Instance == null)
@@ -42,18 +44,35 @@ public class RelayManager : MonoBehaviour
     // -------------------------
     public async Task<string> StartHost()
     {
-        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4);
+        try
+        {
+            if (_unityTransport == null)
+            {
+                _unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+            }
 
-        string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+            if (_unityTransport == null)
+            {
+                Debug.LogError("UnityTransport를 찾을 수 없음");
+                return null;
+            }
 
-        RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4);
 
-        NetworkManager.Singleton.StartHost();
+            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
-        Debug.Log("Host Started. JoinCode = " + joinCode);
+            _unityTransport.SetRelayServerData(new RelayServerData(allocation, "dtls"));
+            NetworkManager.Singleton.StartHost();
 
-        return joinCode;
+            Debug.Log($"✅ 호스트 시작 및 조인 코드: {joinCode}");
+            return joinCode;
+        }
+        
+        catch (System.Exception e)
+        {
+            Debug.LogError("호스트 생성 실패");
+            return null;
+        }
     }
 
     // -------------------------
