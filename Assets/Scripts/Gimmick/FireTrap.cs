@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FireTrap : TrapController
+public class FireTrap : TimerTrapController
 {
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private AudioSource _audioSource;
