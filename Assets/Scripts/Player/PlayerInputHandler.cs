@@ -1,23 +1,69 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerInputHandler : MonoBehaviour
 {
+
+    [SerializeField] private GameFlow gameFlow;
+
     public Vector2 MoveInput {  get; private set; }
 
+    private PlayerInput playerInput;
+    private InputAction moveAction;
+    private InputAction skillAction;
+
     private bool jumpPressed;
-    private bool skill1Pressed;
-    private bool skill2Pressed;
+    private bool skillPressed;
 
     public bool JumpPressed => jumpPressed;
-    public bool Skill1Pressed => skill1Pressed;
-    public bool Skill2Pressed => skill2Pressed;
+    public bool SkillPressed => skillPressed;
+
+    private void Awake()
+    {
+        if (gameFlow == null)
+            gameFlow = FindFirstObjectByType<GameFlow>();
+
+        playerInput = GetComponent<PlayerInput>();
+        moveAction = playerInput.actions["Move"];
+        skillAction = playerInput.actions["UseSkill"];
+        LockGameplayInput();
+    }
+
+
+    private void OnEnable()
+    {
+        if (gameFlow != null)
+        {
+            gameFlow.OnMatchStarted += UnlockGameplayInput;
+            gameFlow.OnReachedGollLine += LockGameplayInput;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (gameFlow != null)
+        {
+            gameFlow.OnMatchStarted -= UnlockGameplayInput;
+            gameFlow.OnReachedGollLine -= LockGameplayInput;
+        }
+    }
+
+    private void UnlockGameplayInput()
+    {
+        moveAction.Enable();
+        skillAction.Enable();
+    }
+    private void LockGameplayInput()
+    {
+        moveAction.Disable();
+        skillAction.Disable();
+    }
 
     public void ResetFrameInputFlags()
     {
         jumpPressed = false;
-        skill1Pressed = false;  
-        skill2Pressed = false;
+        skillPressed = false;  
     }
     private void LateUpdate()
     {
@@ -37,22 +83,10 @@ public class PlayerInputHandler : MonoBehaviour
         jumpPressed = true;
     }
 
-    //input Key: Q
-    public void OnUseSkill1(InputValue value)
-    {
-        if (!value.isPressed) return;
-        skill1Pressed = true;
-    }
-
     //input Key: LeftShift
-    public void OnUseSkill2(InputValue value)
+    public void OnUseSkill(InputValue value)
     {
         if (!value.isPressed) return;
-        skill2Pressed = true;
+        skillPressed = true;
     }
-
-
-
-
-
 }

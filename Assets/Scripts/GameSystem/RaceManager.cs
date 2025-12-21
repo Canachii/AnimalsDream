@@ -83,12 +83,20 @@ public class RaceManager : MonoBehaviour
         p.finished = true;
         p.finishTime = Time.time - gameFlow.MatchStartTime;
 
-        if(!endScheduled)
+        StartCoroutine(ReachedGollLine());
+
+
+        if (!endScheduled)
         {
             endScheduled = true;
             StartCoroutine(EndMatchAfterDelay());
         }
         finishPlayerCount++;
+    }
+    private IEnumerator ReachedGollLine()
+    {
+        yield return new WaitForSeconds(1f);
+        gameFlow.ReachedGollLine();
     }
 
     private IEnumerator EndMatchAfterDelay()

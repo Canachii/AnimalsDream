@@ -30,6 +30,6 @@ public class PlayerRaceProgress : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(name + " Rank: " + Rank);
+        //Debug.Log(name + " Rank: " + Rank);
     }
 }

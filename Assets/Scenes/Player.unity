@@ -569,6 +569,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2282844488102703697, guid: 98315bcff0b159d4d8966a8189fa889d, type: 3}
+      propertyPath: gameFlow
+      value: 
+      objectReference: {fileID: 225620811}
     - target: {fileID: 3653743199480069864, guid: 98315bcff0b159d4d8966a8189fa889d, type: 3}
       propertyPath: blizzardEffectPrefab
       value: 
