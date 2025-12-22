@@ -47,6 +47,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (IsOwner)
         {
+            rb.isKinematic = false;
+
             if (playerVcam != null)
             {
                 playerVcam.gameObject.SetActive(true);
