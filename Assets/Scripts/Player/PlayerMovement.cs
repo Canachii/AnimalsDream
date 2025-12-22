@@ -26,6 +26,7 @@ public class PlayerMovement : NetworkBehaviour
     private Animator animator;
 
     private Vector2 moveInput;
+
     public bool IsGrounded { get; private set; } = true;
 
     // [추가] 강제 전진 모드 플래그 (스킬 사용 시 true)
@@ -47,6 +48,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (IsOwner)
         {
+            rb.isKinematic = false;
+
             if (playerVcam != null)
             {
                 playerVcam.gameObject.SetActive(true);
@@ -89,6 +92,18 @@ public class PlayerMovement : NetworkBehaviour
     public void Update()
     {
         if (!IsOwner) return;
+
+        if (camTransform == null)
+        {
+            if (Camera.main != null)
+            {
+                camTransform = Camera.main.transform;
+            }
+            else
+            {
+                return;
+            }
+        }
         
         // [수정] 강제 전진 중이면 입력이 없어도 속도를 1(최대)로 처리해 달리기 애니메이션 재생
         float speed = isForcedForward ? 1f : moveInput.magnitude;
