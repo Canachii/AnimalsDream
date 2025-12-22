@@ -1420,6 +1420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52e37c52f9e8329449c3ed81deb53de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  ShowTopMostFoldoutHeaderGroup: 1
   moveSpeed: 5
   jumpHeight: 5
   rotationSpeed: 10

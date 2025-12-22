@@ -9,7 +9,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        spawnManager = FindObjectOfType<PlayerSpawnManager>();
+        DontDestroyOnLoad(gameObject);
+
+        spawnManager = Object.FindAnyObjectByType<PlayerSpawnManager>();
         if (spawnManager == null)
         {
             Debug.LogError("GameManager : PlayerSpawnManager를 찾을 수 없습니다.");

@@ -1,8 +1,11 @@
 using UnityEngine;
+using Unity.Netcode;
+using System.Globalization;
+using Unity.Cinemachine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -15,6 +18,9 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Camera")]
     [SerializeField] private Transform camTransform;
+
+    [Header("Camera Setup")]
+    [SerializeField] private CinemachineCamera playerVcam;
 
     private Rigidbody rb;
     private Animator animator;
@@ -37,6 +43,38 @@ public class PlayerMovement : MonoBehaviour
         baseMoveSpeed = moveSpeed;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            if (playerVcam != null)
+            {
+                playerVcam.gameObject.SetActive(true);
+                playerVcam.Priority = 10; // 메인 카메라에 붙어있는 Brain이 얘를 선택하도록..
+
+                GameObject mainCam = GameObject.FindGameObjectWithTag("MainCamera");
+                if (mainCam != null)
+                {
+                    camTransform = mainCam.transform;
+                }
+            }
+        }
+        else
+        {
+            // 내꺼 아니면 카메라 끄기
+            if (playerVcam != null)
+            {
+                playerVcam.gameObject.SetActive(false);
+                playerVcam.Priority = 0;
+            }
+
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+            }
+        }
+    }
+
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
@@ -50,6 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void Update()
     {
+        if (!IsOwner) return;
+        
         // [수정] 강제 전진 중이면 입력이 없어도 속도를 1(최대)로 처리해 달리기 애니메이션 재생
         float speed = isForcedForward ? 1f : moveInput.magnitude;
 
@@ -59,6 +99,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         Vector3 move;
 
         // [수정] 강제 전진 모드일 때는 '현재 내 정면'으로 이동 방향 고정

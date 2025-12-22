@@ -95,7 +95,7 @@ public class PlayerSpawnManager : MonoBehaviour
         GameObject playerObj = Instantiate(playerPrefab, spawnPos.position, spawnPos.rotation);
 
         NetworkObject netObj = playerObj.GetComponent<NetworkObject>();
-        if (netObj != null)
+        if (netObj == null)
         {
             Debug.LogError("플레이어 프리팹에 NetworkObject 컴포넌트가 없음");
             return;
