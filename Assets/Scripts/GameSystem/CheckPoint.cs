@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
-    [SerializeField] private RaceManager raceManager;
+    [SerializeField] private RespawnSystem raceManager;
     [SerializeField] private int index;
 
     private void Awake()
     {
-        if(raceManager == null) raceManager = FindFirstObjectByType<RaceManager>();
+        if(raceManager == null) raceManager = FindFirstObjectByType<RespawnSystem>();
 
         GetComponent<Collider>().isTrigger = true;
     }
@@ -16,6 +16,5 @@ public class CheckPoint : MonoBehaviour
     {
         if (!other.gameObject.CompareTag("Player")) return;
         other.GetComponent<PlayerRaceProgress>().UpdateChekpoint(index);
-        //raceManager.ReachCheckpoint(index, player);
     }
 }

@@ -15,9 +15,10 @@ public class GollLine : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.gameObject.CompareTag("Player")) return;
-        //GetComponentInParent
-        var profress = other.GetComponent<PlayerRaceProgress>();
-        if(profress == null)return;
-        raceManager.Finish(profress);
+        
+        var progress = other.GetComponent<PlayerRaceProgress>();
+        if(progress == null)return;
+
+        raceManager.Finish(progress);
     }
 }

@@ -4,14 +4,6 @@ using UnityEngine;
 
 public class RaceManager : MonoBehaviour
 {
-    //순위 계산
-    //골인 판정 처리
-    // 경기 종료 조건 판단
-    //플레이어 등록/해제
-    //이밴트 발행
-    //OnRankingUpdated(rankingList)
-    //OnPlayerFinished(playerId, time)
-
     private List<PlayerRaceProgress> players = new List<PlayerRaceProgress>();
     [SerializeField] private GameFlow gameFlow;
     [SerializeField] private Transform[] checkPoint;
