@@ -12,6 +12,7 @@ public class PlayerInputHandler : MonoBehaviour
     private PlayerInput playerInput;
     private InputAction moveAction;
     private InputAction skillAction;
+    private InputAction jumpAction;
 
     private bool jumpPressed;
     private bool skillPressed;
@@ -26,6 +27,7 @@ public class PlayerInputHandler : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
         skillAction = playerInput.actions["UseSkill"];
+        jumpAction = playerInput.actions["Jump"];
 
         LockGameplayInput();
     }
@@ -55,23 +57,27 @@ public class PlayerInputHandler : MonoBehaviour
     {
         moveAction.Enable();
         skillAction.Enable();
+        jumpAction.Enable();
     }
     private void LockGameplayInput()
     {
         moveAction.Disable();
         skillAction.Disable();
+        jumpAction.Disable();
     }
 
     public void OnRespawnStarted()
     {
         moveAction.Disable();
         skillAction.Disable();
+        jumpAction.Disable();
         //카메라 확정되면 카메라 잠금기능 추가 예정
     }    
     public void OnRespawnFinished()
     {
         moveAction.Enable();
         skillAction.Enable();
+        jumpAction.Enable();
         //카메라 확정되면 카메라 잠금기능 해제 추가 예정
     }
 
