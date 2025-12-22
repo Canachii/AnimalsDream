@@ -23,9 +23,10 @@ public class PlayerInputHandler : NetworkBehaviour
             if (playerInput != null)
             {
                 playerInput.enabled = false;
-                this.enabled = false;
-                return;
             }
+
+            this.enabled = false;
+            return;
         }
     }
 
