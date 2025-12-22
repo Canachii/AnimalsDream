@@ -1,8 +1,11 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputHandler : MonoBehaviour
+public class PlayerInputHandler : NetworkBehaviour
 {
+    [SerializeField] private PlayerInput playerInput;
+
     public Vector2 MoveInput {  get; private set; }
 
     private bool jumpPressed;
@@ -13,12 +16,26 @@ public class PlayerInputHandler : MonoBehaviour
     public bool Skill1Pressed => skill1Pressed;
     public bool Skill2Pressed => skill2Pressed;
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            if (playerInput != null)
+            {
+                playerInput.enabled = false;
+                this.enabled = false;
+                return;
+            }
+        }
+    }
+
     public void ResetFrameInputFlags()
     {
         jumpPressed = false;
         skill1Pressed = false;  
         skill2Pressed = false;
     }
+
     private void LateUpdate()
     {
         ResetFrameInputFlags();
@@ -50,9 +67,4 @@ public class PlayerInputHandler : MonoBehaviour
         if (!value.isPressed) return;
         skill2Pressed = true;
     }
-
-
-
-
-
 }

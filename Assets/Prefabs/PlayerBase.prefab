@@ -293,6 +293,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa619197b77df04b930b6453afde2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerInput: {fileID: 8991284424225521436}
 --- !u!1 &3079999537440062662
 GameObject:
   m_ObjectHideFlags: 0
