@@ -15,6 +15,6 @@ public class CheckPoint : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.gameObject.CompareTag("Player")) return;
-        other.GetComponent<PlayerRaceProgress>().UpdateChekpoint(index);
+        other.GetComponent<PlayerRaceProgress>().UpdateChekpoint(index, transform);
     }
 }
