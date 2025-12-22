@@ -172,6 +172,7 @@ MonoBehaviour:
   hostBtn: {fileID: 2143056636}
   clientBtn: {fileID: 1940101741}
   joinBtn: {fileID: 1243579918}
+  serverBtn: {fileID: 1241427439}
   joinCodeInput: {fileID: 2045857338}
   joinCodeText: {fileID: 1535969793}
 --- !u!114 &107323531

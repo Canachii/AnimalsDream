@@ -7,12 +7,18 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
 using UnityEngine;
 using System.Threading.Tasks;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+using System.Collections.Generic;
 
 public class RelayManager : MonoBehaviour
 {
     public static RelayManager Instance;
 
     private UnityTransport _unityTransport;
+
+    private Lobby _currentLobby;
+    private float _heartbeatTimer;
 
     private async void Awake()
     {
@@ -36,6 +42,19 @@ public class RelayManager : MonoBehaviour
         catch (System.Exception e)
         {
             Debug.LogError($"Unity Services Init ERROR : {e.Message}");
+        }
+    }
+
+    private void Update()
+    {
+        if (_currentLobby != null && NetworkManager.Singleton.IsHost)
+        {
+            _heartbeatTimer -= Time.deltaTime;
+            if (_heartbeatTimer <= 0f)
+            {
+                _heartbeatTimer = 15f;
+                LobbyService.Instance.SendHeartbeatPingAsync(_currentLobby.Id);
+            }
         }
     }
 
@@ -75,6 +94,34 @@ public class RelayManager : MonoBehaviour
         }
     }
 
+    public async Task<string> StartHostWithLobby()
+    {
+        string joinCode = await StartHost(); // 기존 호스트 로직 실행
+
+        if (!string.IsNullOrEmpty(joinCode))
+        {
+            try
+            {
+                CreateLobbyOptions options = new CreateLobbyOptions
+                {
+                    IsPrivate = false,
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        {"JoinCode", new DataObject(DataObject.VisibilityOptions.Public, joinCode)}
+                    }
+                };
+
+                _currentLobby = await LobbyService.Instance.CreateLobbyAsync("RandomRoom", 4, options);
+                Debug.Log($"로비 생성 완료 ID : {_currentLobby.Id}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("로비 생성 실패");
+            }
+        }
+        return joinCode;
+    }
+
     // -------------------------
     // 🔵 Client (JoinCode로 접속)
     // -------------------------
@@ -86,5 +133,31 @@ public class RelayManager : MonoBehaviour
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
         NetworkManager.Singleton.StartClient();
+    }
+
+    // -------------------------
+    // 🔵 Client (Quick Join 접속)
+    // -------------------------
+    public async Task QuickJoin()
+    {
+        try
+        {
+            // 참여 가능한 로비 찾기
+            QuickJoinLobbyOptions options = new QuickJoinLobbyOptions();
+            Lobby lobby = await LobbyService.Instance.QuickJoinLobbyAsync(options);
+            _currentLobby = lobby;
+
+            // 로비 데이터에서 JoinCode 꺼내기
+            string joinCode = lobby.Data["JoinCode"].Value;
+
+            // 해당 코드로 클라이언트 접속
+            await StartClient(joinCode);
+            Debug.Log($"퀵 조인 성공 코드 : {joinCode}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("참여 가능한 로비가 없음");
+            throw e;
+        }
     }
 }
