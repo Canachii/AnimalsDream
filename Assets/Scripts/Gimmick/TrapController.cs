@@ -5,56 +5,24 @@ public abstract class TrapController : MonoBehaviour
 {
     protected Collider trapCollider;
     protected Renderer trapRenderer;
-    //protected Color originColor;
-    protected bool isActive = false;
+    protected string target = "Player";
 
-
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         trapCollider = GetComponent<Collider>();
         trapRenderer = GetComponent<Renderer>();
-
-        if( trapCollider != null )
-        {
-            trapCollider.enabled = false;
-        }
-
-        StartCoroutine(TrapCycle());
     }
 
-    private IEnumerator TrapCycle()
+    protected bool IsTarget(Collider other)
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(5f);
+        if (other.CompareTag(target))
+            return true;
+        if (other.attachedRigidbody != null && other.attachedRigidbody.CompareTag(target))
+            return true;
 
-            ActivateTrap();
-
-            yield return new WaitForSeconds(3f);
-
-            DeactivateTrap();
-        }
+        return false;
     }
 
-    private void ActivateTrap()
-    {
-        trapCollider.enabled = true;
-
-        GetComponent<Renderer>().material.color = Color.red;
-
-        Debug.Log($"[{gameObject.name}] 활성화");
-    }
-
-    private void DeactivateTrap()
-    {
-        trapCollider.enabled = false;
-
-        GetComponent<Renderer>().material.color = Color.gray;
-
-        Debug.Log($"[{gameObject.name}] 비활성화");
-    }
-
-    protected abstract void OnActivate();
-    protected abstract void OnDeactivate();
+    protected virtual void OnTriggerStay(Collider other) { }
 
 }
