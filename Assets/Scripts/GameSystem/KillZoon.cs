@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class KillZoon : MonoBehaviour
 {
-    [SerializeField] RespawnSystem respawnSystem;
+    [SerializeField] private RespawnSystem respawnSystem;
 
     private void Awake()
     {
-        if (respawnSystem == null) respawnSystem = FindFirstObjectByType<RespawnSystem>();
+        if (!respawnSystem)
+        { 
+            respawnSystem = FindFirstObjectByType<RespawnSystem>();
+            Debug.Assert(respawnSystem, "[KillZoon] RespawnSystem reference missing.");
+        } 
 
         GetComponent<Collider>().isTrigger = true;
     }

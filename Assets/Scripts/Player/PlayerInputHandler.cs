@@ -22,7 +22,11 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void Awake()
     {
-        if (gameFlow == null) gameFlow = FindFirstObjectByType<GameFlow>();        
+        if (!gameFlow)
+        {
+            gameFlow = FindFirstObjectByType<GameFlow>();
+            Debug.Assert(gameFlow, "[PlayerInputHandler] GameFlow reference missing.");
+        }
 
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions["Move"];
@@ -71,14 +75,15 @@ public class PlayerInputHandler : MonoBehaviour
         moveAction.Disable();
         skillAction.Disable();
         jumpAction.Disable();
-        //카메라 확정되면 카메라 잠금기능 추가 예정
-    }    
+        // TODO: Add camera lock feature.
+    }
+
     public void OnRespawnFinished()
     {
         moveAction.Enable();
         skillAction.Enable();
         jumpAction.Enable();
-        //카메라 확정되면 카메라 잠금기능 해제 추가 예정
+        // TODO: Add camera lock feature.
     }
 
 

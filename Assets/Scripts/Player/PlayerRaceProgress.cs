@@ -11,6 +11,16 @@ public class PlayerRaceProgress : MonoBehaviour
 
     public int Rank { get; private set; }
 
+    private void Awake()
+    {
+        if (!raceManager)
+        { 
+            raceManager = FindFirstObjectByType<RaceManager>();
+            Debug.Assert(raceManager, "[PlayerRaceProgress] RaceManager reference missing.");
+        } 
+    }
+
+
     private void OnEnable()
     {
         raceManager.RegisterPlayer(this);

@@ -14,11 +14,14 @@ public class RaceManager : MonoBehaviour
     [Header("Finish Settings")]
     [SerializeField] private float endDelaySeconds = 3f;
 
-
-
-
     private void Awake()
     {
+        if (!gameFlow) 
+        { 
+            gameFlow = FindFirstObjectByType<GameFlow>();
+            Debug.Assert(gameFlow, "[RaceManager] GameFlow reference missing.");
+        }
+
         finishPlayerCount = 0;
         endScheduled = false;
     }
@@ -34,7 +37,6 @@ public class RaceManager : MonoBehaviour
         {
             for (int j = i + 1; j < players.Count; j++)
             {
-                // i가 j보다 뒤면 스왑해야 함 (0번이 1등이니까)
                 bool shouldSwap = false;
 
                 if (players[i].lastCheckpointIndex < players[j].lastCheckpointIndex)
@@ -44,12 +46,11 @@ public class RaceManager : MonoBehaviour
                 else if (players[i].lastCheckpointIndex == players[j].lastCheckpointIndex)
                 {
                     int next = players[i].lastCheckpointIndex + 1;
-                    if (next >= checkPoint.Length) continue; // 혹은 next = checkPoint.Length - 1 / next %= checkPoint.Length
+                    if (next >= checkPoint.Length) continue;
 
                     float a = (checkPoint[next].position - players[i].transform.position).sqrMagnitude;
                     float b = (checkPoint[next].position - players[j].transform.position).sqrMagnitude;
 
-                    // i가 더 멀면 뒤 -> 스왑
                     if (a > b) shouldSwap = true;
                 }
 
@@ -85,6 +86,7 @@ public class RaceManager : MonoBehaviour
         }
         finishPlayerCount++;
     }
+    
     private IEnumerator ReachedGollLine()
     {
         yield return new WaitForSeconds(1f);
@@ -96,8 +98,6 @@ public class RaceManager : MonoBehaviour
         yield return new WaitForSeconds(endDelaySeconds);
         gameFlow.FinishMatch();
     }
-
-
 
     public void RegisterPlayer(PlayerRaceProgress p)
     {

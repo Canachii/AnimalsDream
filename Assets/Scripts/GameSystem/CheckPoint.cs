@@ -2,13 +2,10 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
-    [SerializeField] private RespawnSystem raceManager;
     [SerializeField] private int index;
 
     private void Awake()
     {
-        if(raceManager == null) raceManager = FindFirstObjectByType<RespawnSystem>();
-
         GetComponent<Collider>().isTrigger = true;
     }
 

@@ -6,7 +6,11 @@ public class GollLine : MonoBehaviour
 
     private void Awake()
     {
-        if (raceManager == null) raceManager = FindFirstObjectByType<RaceManager>();
+        if (!raceManager) 
+        {
+            raceManager = FindFirstObjectByType<RaceManager>();
+            Debug.Assert(raceManager, "[GollLine] RaceManager reference missing.");
+        } 
 
         GetComponent<Collider>().isTrigger = true;
     }
