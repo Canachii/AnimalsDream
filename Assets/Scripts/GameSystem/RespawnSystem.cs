@@ -9,7 +9,7 @@ public class RespawnSystem : MonoBehaviour
     public void DeathAndRespawn(PlayerRaceProgress p)
     {
         if (p == null) return;
-        p.transform.position = p.lastCheckointTransform.position;
+        p.transform.position = p.lastCheckpointTransform.position;
 
         var rb = p.GetComponent<Rigidbody>();
         if(rb != null ) rb.linearVelocity = Vector3.zero;

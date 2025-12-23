@@ -21,7 +21,7 @@ public class GameFlow : MonoBehaviour
     public event Action<int> OnCountdownTick; // 3,2,1...
     public event Action OnMatchStarted;
     public event Action OnMatchFinished;
-    public event Action OnReachedGollLine;
+    public event Action OnReachedGoalLine;
 
     public float MatchStartTime { get; private set; }
 
@@ -53,9 +53,9 @@ public class GameFlow : MonoBehaviour
         SetState(MatchState.Playing);
         OnMatchStarted?.Invoke();
     }
-    public void ReachedGollLine()
+    public void ReachedGoalLine()
     {
-        OnReachedGollLine?.Invoke();
+        OnReachedGoalLine?.Invoke();
     }
     public void FinishMatch()
     {

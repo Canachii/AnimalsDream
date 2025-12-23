@@ -43,7 +43,7 @@ public class PlayerInputHandler : MonoBehaviour
         {
             gameFlow.OnMatchStarted += UnlockGameplayInput;
             gameFlow.OnMatchFinished += LockGameplayInput;
-            gameFlow.OnReachedGollLine += LockGameplayInput;
+            gameFlow.OnReachedGoalLine += LockGameplayInput;
         }
     }
 
@@ -53,7 +53,7 @@ public class PlayerInputHandler : MonoBehaviour
         {
             gameFlow.OnMatchStarted -= UnlockGameplayInput;
             gameFlow.OnMatchFinished -= LockGameplayInput;
-            gameFlow.OnReachedGollLine -= LockGameplayInput;
+            gameFlow.OnReachedGoalLine -= LockGameplayInput;
         }
     }
 

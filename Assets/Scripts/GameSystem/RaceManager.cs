@@ -76,7 +76,7 @@ public class RaceManager : MonoBehaviour
         p.finished = true;
         p.finishTime = Time.time - gameFlow.MatchStartTime;
 
-        StartCoroutine(ReachedGollLine());
+        StartCoroutine(ReachedGoalLine());
 
 
         if (!endScheduled)
@@ -87,10 +87,10 @@ public class RaceManager : MonoBehaviour
         finishPlayerCount++;
     }
     
-    private IEnumerator ReachedGollLine()
+    private IEnumerator ReachedGoalLine()
     {
         yield return new WaitForSeconds(1f);
-        gameFlow.ReachedGollLine();
+        gameFlow.ReachedGoalLine();
     }
 
     private IEnumerator EndMatchAfterDelay()

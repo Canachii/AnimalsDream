@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GollLine : MonoBehaviour
+public class GoalLine : MonoBehaviour
 {
     [SerializeField] private RaceManager raceManager;
 
@@ -9,7 +9,7 @@ public class GollLine : MonoBehaviour
         if (!raceManager) 
         {
             raceManager = FindFirstObjectByType<RaceManager>();
-            Debug.Assert(raceManager, "[GollLine] RaceManager reference missing.");
+            Debug.Assert(raceManager, "[GoalLine] RaceManager reference missing.");
         } 
 
         GetComponent<Collider>().isTrigger = true;

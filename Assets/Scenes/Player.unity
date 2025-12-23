@@ -533,7 +533,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 3
-  lastCheckointTransform: {fileID: 0}
+  lastCheckpointTransform: {fileID: 0}
   finishTime: 0
   finished: 0
 --- !u!136 &852166285
@@ -702,7 +702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 4
-  lastCheckointTransform: {fileID: 0}
+  lastCheckpointTransform: {fileID: 0}
   finishTime: 0
   finished: 0
 --- !u!136 &1204628771
@@ -861,7 +861,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 0
-  lastCheckointTransform: {fileID: 0}
+  lastCheckpointTransform: {fileID: 0}
   finishTime: 0
   finished: 0
 --- !u!136 &1372656765
@@ -1601,7 +1601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 2
-  lastCheckointTransform: {fileID: 0}
+  lastCheckpointTransform: {fileID: 0}
   finishTime: 0
   finished: 0
 --- !u!136 &1860992872
@@ -1893,7 +1893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
   raceManager: {fileID: 2097746172}
   lastCheckpointIndex: 1
-  lastCheckointTransform: {fileID: 0}
+  lastCheckpointTransform: {fileID: 0}
   finishTime: 0
   finished: 0
 --- !u!136 &2136709782
@@ -2071,7 +2071,7 @@ PrefabInstance:
       objectReference: {fileID: 1936794997}
     - target: {fileID: 9190440027064808161, guid: 8f1410bbb28ea424ca2a4093a5f45aa5, type: 3}
       propertyPath: m_Name
-      value: KillZoon
+      value: KillZone
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2270,7 +2270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6812184960840421470, guid: f0b71a1bfde9a7f4d9b5d6307b42b958, type: 3}
       propertyPath: m_Name
-      value: GollLine
+      value: GoalLine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

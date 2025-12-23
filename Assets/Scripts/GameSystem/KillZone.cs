@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class KillZoon : MonoBehaviour
+public class KillZone: MonoBehaviour
 {
     [SerializeField] private RespawnSystem respawnSystem;
 
@@ -9,7 +9,7 @@ public class KillZoon : MonoBehaviour
         if (!respawnSystem)
         { 
             respawnSystem = FindFirstObjectByType<RespawnSystem>();
-            Debug.Assert(respawnSystem, "[KillZoon] RespawnSystem reference missing.");
+            Debug.Assert(respawnSystem, "[KillZone] RespawnSystem reference missing.");
         } 
 
         GetComponent<Collider>().isTrigger = true;
