@@ -6,15 +6,20 @@ public class PlayerInputHandler : NetworkBehaviour
 {
     [SerializeField] private PlayerInput playerInput;
 
+    [SerializeField] private GameFlow gameFlow;
+
     public Vector2 MoveInput {  get; private set; }
 
+    private PlayerInput playerInput;
+    private InputAction moveAction;
+    private InputAction skillAction;
+    private InputAction jumpAction;
+
     private bool jumpPressed;
-    private bool skill1Pressed;
-    private bool skill2Pressed;
+    private bool skillPressed;
 
     public bool JumpPressed => jumpPressed;
-    public bool Skill1Pressed => skill1Pressed;
-    public bool Skill2Pressed => skill2Pressed;
+    public bool SkillPressed => skillPressed;
 
     public override void OnNetworkSpawn()
     {
@@ -32,14 +37,80 @@ public class PlayerInputHandler : NetworkBehaviour
 
     public void ResetFrameInputFlags()
     {
-        jumpPressed = false;
-        skill1Pressed = false;  
-        skill2Pressed = false;
+        if (!gameFlow)
+        {
+            gameFlow = FindFirstObjectByType<GameFlow>();
+            Debug.Assert(gameFlow, "[PlayerInputHandler] GameFlow reference missing.");
+        }
+
+        playerInput = GetComponent<PlayerInput>();
+        moveAction = playerInput.actions["Move"];
+        skillAction = playerInput.actions["UseSkill"];
+        jumpAction = playerInput.actions["Jump"];
+
+        LockGameplayInput();
     }
+
+
+    private void OnEnable()
+    {
+        if (gameFlow != null)
+        {
+            gameFlow.OnMatchStarted += UnlockGameplayInput;
+            gameFlow.OnMatchFinished += LockGameplayInput;
+            gameFlow.OnReachedGoalLine += LockGameplayInput;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (gameFlow != null)
+        {
+            gameFlow.OnMatchStarted -= UnlockGameplayInput;
+            gameFlow.OnMatchFinished -= LockGameplayInput;
+            gameFlow.OnReachedGoalLine -= LockGameplayInput;
+        }
+    }
+
+    private void UnlockGameplayInput()
+    {
+        moveAction.Enable();
+        skillAction.Enable();
+        jumpAction.Enable();
+    }
+    private void LockGameplayInput()
+    {
+        moveAction.Disable();
+        skillAction.Disable();
+        jumpAction.Disable();
+    }
+
+    public void OnRespawnStarted()
+    {
+        moveAction.Disable();
+        skillAction.Disable();
+        jumpAction.Disable();
+        // TODO: Add camera lock feature.
+    }
+
+    public void OnRespawnFinished()
+    {
+        moveAction.Enable();
+        skillAction.Enable();
+        jumpAction.Enable();
+        // TODO: Add camera lock feature.
+    }
+
+
 
     private void LateUpdate()
     {
         ResetFrameInputFlags();
+    }
+    public void ResetFrameInputFlags()
+    {
+        jumpPressed = false;
+        skillPressed = false;  
     }
 
     //input Key: 
@@ -55,17 +126,10 @@ public class PlayerInputHandler : NetworkBehaviour
         jumpPressed = true;
     }
 
-    //input Key: Q
-    public void OnUseSkill1(InputValue value)
-    {
-        if (!value.isPressed) return;
-        skill1Pressed = true;
-    }
-
     //input Key: LeftShift
-    public void OnUseSkill2(InputValue value)
+    public void OnUseSkill(InputValue value)
     {
         if (!value.isPressed) return;
-        skill2Pressed = true;
+        skillPressed = true;
     }
 }
