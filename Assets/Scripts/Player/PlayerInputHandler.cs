@@ -33,6 +33,11 @@ public class PlayerInputHandler : NetworkBehaviour
             this.enabled = false;
             return;
         }
+
+        if (IsOwner && playerInput != null)
+        {
+            playerInput.enabled = true;
+        }
     }
 
     public void Awake()
