@@ -1014,6 +1014,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DisappearTrap
       objectReference: {fileID: 0}
+    - target: {fileID: 7005887745207133005, guid: 06ac10be0f4f74c45baa6435e3f70200, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 13d7b90c16157544081c698aa3f8c422, type: 2}
     - target: {fileID: 9121255781867284141, guid: 06ac10be0f4f74c45baa6435e3f70200, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.7
