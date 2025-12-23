@@ -6,11 +6,11 @@ public class PlayerInputHandler : NetworkBehaviour
 {
     [SerializeField] private PlayerInput playerInput;
 
-    [SerializeField] private GameFlow gameFlow;
+    private GameFlow gameFlow;
 
     public Vector2 MoveInput {  get; private set; }
 
-    private PlayerInput playerInput;
+    //private PlayerInput playerInput;
     private InputAction moveAction;
     private InputAction skillAction;
     private InputAction jumpAction;
@@ -35,7 +35,7 @@ public class PlayerInputHandler : NetworkBehaviour
         }
     }
 
-    public void ResetFrameInputFlags()
+    public void Awake()
     {
         if (!gameFlow)
         {
