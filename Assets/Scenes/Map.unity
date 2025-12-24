@@ -175,6 +175,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FanTrap
       objectReference: {fileID: 0}
+    - target: {fileID: 8946734809795448178, guid: bf0287816e0c8004691e5bf801c93a1c, type: 3}
+      propertyPath: _fanRotation
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8946734809795448178, guid: bf0287816e0c8004691e5bf801c93a1c, type: 3}
+      propertyPath: _fanAcceleration
+      value: 60
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

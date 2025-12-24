@@ -29,11 +29,12 @@ public class FanTrap : TimerTrapController
         base.Start();
 
         if (_fanRotation == null)
-            _fanRotation = transform.Find("Cylinder.002");
+            _fanRotation = transform.Find("Table_fan/Cylinder.002");
     }
 
     private void Update()
     {
+        if (_fanRotation == null) return;
         _fanRotation.Rotate(Vector3.up * _fanRotateSpeed * Time.deltaTime);
 
         if (_isFanOn)
