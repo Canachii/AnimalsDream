@@ -32,12 +32,7 @@ public class PlayerController : MonoBehaviour
         if (input.JumpPressed)
             movement.Jump();
 
-        if (input.Skill1Pressed)
+        if (input.SkillPressed)
             skillController.UseSkill(0);
-
-        if(input.Skill2Pressed)
-            skillController.UseSkill(1);
     }
-
-
 }

@@ -1196,9 +1196,11 @@ GameObject:
   - component: {fileID: 7776318975018326873}
   - component: {fileID: 7623016409226855487}
   - component: {fileID: 2282844488102703697}
+  - component: {fileID: 4617185948800477200}
   - component: {fileID: 3750382282183093084}
   - component: {fileID: 3653743199480069864}
   - component: {fileID: 1496240067084777393}
+  - component: {fileID: 8277000744775941054}
   m_Layer: 0
   m_Name: Penguin
   m_TagString: Player
@@ -1310,7 +1312,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7352763928063775421}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
@@ -1335,7 +1337,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7352763928063775421}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
@@ -1440,6 +1442,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa619197b77df04b930b6453afde2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
+  gameFlow: {fileID: 0}
+--- !u!114 &4617185948800477200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0c62fe0614de4445a8d00355b0a02dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
+  raceManager: {fileID: 0}
+  lastCheckpointIndex: -1
+  lastCheckointTransform: {fileID: 0}
+  finishTime: 0
+  finished: 0
 --- !u!114 &3750382282183093084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1469,11 +1489,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PenguinSkill
   skillName: 
   icon: {fileID: 0}
-  cooldown: 1
+  cooldown: 9
   description: 
   slowRatio: 0.5
   duration: 4
-  blizzardEffectPrefab: {fileID: 1920325297268671343, guid: 889dd67908ff48640a817f0b0074814e, type: 3}
+  slowEffectPrefab: {fileID: 0}
   effectScale: 2
 --- !u!114 &1496240067084777393
 MonoBehaviour:
@@ -1491,6 +1511,19 @@ MonoBehaviour:
   icon: {fileID: 0}
   cooldown: 1
   description: "\uD14C\uC2A4\uD2B8 \uC2A4\uD0AC\uC774\uB2E4."
+--- !u!114 &8277000744775941054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64cef62a23d78f5418517779dfd940cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaterialHandler
+  translucentMaterial: {fileID: 2100000, guid: a0b32d4db9327194997f88eccecb22d9, type: 2}
 --- !u!1 &8156699869588700837
 GameObject:
   m_ObjectHideFlags: 0
