@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
@@ -6,7 +7,7 @@ using UnityEngine.Windows;
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerSkillController))]
 [RequireComponent(typeof(PlayerInputHandler))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     private PlayerMovement movement;
     private PlayerSkillController skillController;
@@ -27,6 +28,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return; // 내 캐릭터가 아니면 아래 로직 실행 안함
+
         movement.SetMoveInput(input.MoveInput);
 
         if (input.JumpPressed)

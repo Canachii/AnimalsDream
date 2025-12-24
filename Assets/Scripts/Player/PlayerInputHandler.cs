@@ -1,15 +1,16 @@
-using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputHandler : MonoBehaviour
+public class PlayerInputHandler : NetworkBehaviour
 {
+    [SerializeField] private PlayerInput playerInput;
 
-    [SerializeField] private GameFlow gameFlow;
+    private GameFlow gameFlow;
 
     public Vector2 MoveInput {  get; private set; }
 
-    private PlayerInput playerInput;
+    //private PlayerInput playerInput;
     private InputAction moveAction;
     private InputAction skillAction;
     private InputAction jumpAction;
@@ -20,7 +21,26 @@ public class PlayerInputHandler : MonoBehaviour
     public bool JumpPressed => jumpPressed;
     public bool SkillPressed => skillPressed;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            if (playerInput != null)
+            {
+                playerInput.enabled = false;
+            }
+
+            this.enabled = false;
+            return;
+        }
+
+        if (IsOwner && playerInput != null)
+        {
+            playerInput.enabled = true;
+        }
+    }
+
+    public void Awake()
     {
         if (!gameFlow)
         {
