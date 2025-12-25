@@ -2860,7 +2860,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1d4675634ad4a4e44a8a7a99295aaef0, type: 2}
+  - {fileID: 2100000, guid: 488f34d5cc4c30c45a0fc4d20bd57c6f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8561,7 +8561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3892072857
+  GlobalObjectIdHash: 2513433365
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -8750,4 +8750,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64cef62a23d78f5418517779dfd940cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaterialHandler
-  translucentMaterial: {fileID: 0}
+  translucentMaterial: {fileID: 2100000, guid: 373c5a9c0a2897e47aa28da0dda06b83, type: 2}

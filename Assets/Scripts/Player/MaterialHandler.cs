@@ -4,12 +4,12 @@ public class MaterialHandler : MonoBehaviour
 {
     [SerializeField] private Material translucentMaterial;
 
-    private SkinnedMeshRenderer smr;
+    private SkinnedMeshRenderer[] smr;
     private Material originalMaterial;
 
     private void Awake()
     {
-        smr = GetComponentInChildren<SkinnedMeshRenderer>();
+        smr = GetComponentsInChildren<SkinnedMeshRenderer>();
         
         if (smr == null)
         {
@@ -17,7 +17,7 @@ public class MaterialHandler : MonoBehaviour
             return;
         }
 
-        originalMaterial = smr.sharedMaterial;
+        originalMaterial = smr[0].sharedMaterial;
     }
 
     public void ApplyTranslucent()
@@ -29,15 +29,25 @@ public class MaterialHandler : MonoBehaviour
             return;
         }
 
-        smr.sharedMaterial = translucentMaterial;
+        foreach (var t in smr)
+        {
+            var mats = t.materials;
+            for (int i = 0; i < mats.Length; i++)
+                mats[i] = translucentMaterial;
+            t.materials = mats;
+        }
     }
     public void ApplyOriginal()
     {
         if (smr == null) return;
         if (originalMaterial == null ) return;
 
-        smr.sharedMaterial = originalMaterial;
+        foreach (var t in smr)
+        {
+            var mats = t.materials;
+            for (int i = 0; i < mats.Length; i++)
+                mats[i] = originalMaterial;
+            t.materials = mats;
+        }
     }
-
-
 }
