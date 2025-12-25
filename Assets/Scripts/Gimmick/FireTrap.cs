@@ -15,6 +15,13 @@ public class FireTrap : TimerTrapController
         Stop();
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        if (trapCollider != null)
+            trapCollider.enabled = false;
+    }
+
     protected override void Start()
     {
         base.Start();
