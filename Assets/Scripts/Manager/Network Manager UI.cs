@@ -72,6 +72,7 @@ public class NetworkManagerUI : MonoBehaviour
                 await RelayManager.Instance.StartClient(code);
                 Debug.Log("클라이언트 시작 성공");
 
+                _currentJoinCode = code;
                 joinCodeText.text = $"초대 코드: {code}";
 
                 lobbyPanel.SetActive(false);
