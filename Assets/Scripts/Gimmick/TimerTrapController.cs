@@ -11,8 +11,6 @@ public abstract class TimerTrapController : TrapController
     protected override void Awake()
     {
         base.Awake();
-        if(trapCollider != null)
-            trapCollider.enabled = false;
     }
 
     protected virtual void Start()
@@ -35,19 +33,13 @@ public abstract class TimerTrapController : TrapController
     private void ActivateTrap()
     {
         isActive = true;
-        trapCollider.enabled = true;
         OnActivate();
-
-        Debug.Log($"[{gameObject.name}] 활성화");
     }
 
     private void DeactivateTrap()
     {
         isActive = false;
-        trapCollider.enabled = false;
         OnDeactivate();
-
-        Debug.Log($"[{gameObject.name}] 비활성화");
     }
 
     protected abstract void OnActivate();
