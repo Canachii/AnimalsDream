@@ -11,6 +11,11 @@ public class LobbyManager : NetworkBehaviour
     // 서버에서 관리하고 모든 클라이언트에게 동기화되는 리스트
     private NetworkList<PlayerData> _players = new NetworkList<PlayerData>();
 
+    private void Awake()
+    {
+        _players = new NetworkList<PlayerData>();
+    }
+
     public override void OnNetworkSpawn()
     {
         if (IsServer)
@@ -18,11 +23,11 @@ public class LobbyManager : NetworkBehaviour
             // 새로운 플레이어 접속 시 이벤트 등록
             NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnected;
-        }
 
-        if (!IsServer)
-        {
-            startBtn.gameObject.SetActive(false);
+            foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+            {
+                HandleClientConnected(client.ClientId);
+            }
         }
 
         // 리스트가 변할 때마다 UI 업데이트 함수 실행
@@ -37,8 +42,25 @@ public class LobbyManager : NetworkBehaviour
         UpdatePlayerListUI();
     }
 
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer && NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnected;
+        }
+    }
+
     private void HandleClientConnected(ulong clientId)
     {
+        if (!IsServer) return;
+
+        // 이미 리스트에 해당 ID가 있는지 확인하여 중복 방지
+        foreach (var player in _players)
+        {
+            if (player.ClientId == clientId) return;
+        }
+
         AddPlayerToList(clientId);
     }
 
@@ -66,6 +88,8 @@ public class LobbyManager : NetworkBehaviour
     private void UpdatePlayerListUI()
     {
         if (playerListText == null) return;
+
+        playerListText.text = "";
 
         foreach (var player in _players)
         {

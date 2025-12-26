@@ -71,6 +71,11 @@ public class NetworkManagerUI : MonoBehaviour
             {
                 await RelayManager.Instance.StartClient(code);
                 Debug.Log("클라이언트 시작 성공");
+
+                lobbyPanel.SetActive(false);
+                roomPanel.SetActive(true);
+
+                startBtn.gameObject.SetActive(false);
             }
             catch (System.Exception e)
             {
