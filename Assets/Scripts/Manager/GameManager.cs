@@ -40,9 +40,6 @@ public class GameManager : MonoBehaviour
 
             // 씬 로드 완료 이벤트 구독
             NetworkManager.Singleton.SceneManager.OnLoadComplete += HandleSceneLoadComplete;
-
-            // GameScene으로 전환
-            NetworkManager.Singleton.SceneManager.LoadScene(GameSceneName, LoadSceneMode.Single);
         }
     }
 

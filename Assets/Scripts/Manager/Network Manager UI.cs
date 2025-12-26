@@ -1,22 +1,61 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NetworkManagerUI : MonoBehaviour
 {
-    [SerializeField] private Button hostBtn;
-    [SerializeField] private Button clientBtn;
-    [SerializeField] private Button joinBtn;
+    [Header("Panels")]
+    [SerializeField] private GameObject lobbyPanel;
+    [SerializeField] private GameObject roomPanel;
+
+    [Header("Lobby UI")]
+    [SerializeField] private Button createRoomBtn;
     [SerializeField] private InputField joinCodeInput;
+
+    [Header("Room UI")]
     [SerializeField] private Text joinCodeText;
+    [SerializeField] private Button joinBtn;
+    [SerializeField] private Button copyBtn;
+    [SerializeField] private Text playerListText;
+    [SerializeField] private Button startBtn;
+
+    private string _currentJoinCode;
 
     private void Start()
     {
-        hostBtn.onClick.AddListener(async () =>
+        lobbyPanel.SetActive(true);
+        roomPanel.SetActive(false);
+
+        createRoomBtn.onClick.AddListener(async () =>
         {
-            Debug.Log("호스트 버튼 클릭됨");
-            string code = await RelayManager.Instance.StartHost();
-            joinCodeText.text = code;
+            string code = await RelayManager.Instance.StartHostWithLobby();
+            if (!string.IsNullOrEmpty(code))
+            {
+                _currentJoinCode = code;
+                joinCodeText.text = $"초대 코드 : {code}";
+                Debug.Log($"방 생성 완료. 코드 :{code}");
+
+                lobbyPanel.SetActive(false);
+                roomPanel.SetActive(true);
+            }
+            joinCodeText.text = $"초대 코드 : {code}";
             joinCodeInput.text = code;
+        });
+
+        copyBtn.onClick.AddListener(() =>
+        {
+            if (!string.IsNullOrEmpty(_currentJoinCode))
+            {
+                GUIUtility.systemCopyBuffer = _currentJoinCode;
+
+                var btnText = copyBtn.GetComponentInChildren<Text>();
+                string originalText = btnText.text;
+                btnText.text = "복사됨!";
+                Debug.Log("초대 코드가 복사되었습니다!");
+
+                Invoke(nameof(ResetCopyButtonText), 1.5f);
+            }
         });
 
         joinBtn.onClick.AddListener(async () =>
@@ -32,11 +71,40 @@ public class NetworkManagerUI : MonoBehaviour
             {
                 await RelayManager.Instance.StartClient(code);
                 Debug.Log("클라이언트 시작 성공");
+
+                _currentJoinCode = code;
+                joinCodeText.text = $"초대 코드: {code}";
+
+                lobbyPanel.SetActive(false);
+                roomPanel.SetActive(true);
+
+                startBtn.gameObject.SetActive(false);
             }
             catch (System.Exception e)
             {
                 Debug.LogError($"클라이언트 시작 실패: {e.Message}");
             }
         });
+
+        startBtn.onClick.AddListener(() =>
+        {
+            if (NetworkManager.Singleton.IsServer)
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene("GameScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            }
+        });
+    }
+
+    private void Update()
+    {
+        if (roomPanel.activeSelf && NetworkManager.Singleton.IsServer)
+        {
+            playerListText.text = $"접속 중인 플레이어 : {NetworkManager.Singleton.ConnectedClients.Count}명";
+        }
+    }
+
+    private void ResetCopyButtonText()
+    {
+        copyBtn.GetComponentInChildren<Text>().text = "복사";
     }
 }
