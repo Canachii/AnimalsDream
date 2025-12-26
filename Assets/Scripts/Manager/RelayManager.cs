@@ -7,12 +7,16 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
 using UnityEngine;
 using System.Threading.Tasks;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+using System.Collections.Generic;
 
 public class RelayManager : MonoBehaviour
 {
     public static RelayManager Instance;
-
     private UnityTransport _unityTransport;
+    private Lobby _currentLobby;
+    private float _heartbeatTimer;
 
     private async void Awake()
     {
@@ -20,6 +24,19 @@ public class RelayManager : MonoBehaviour
             Instance = this;
 
         await InitializeUnityServices();
+    }
+
+    private void Update()
+    {
+        if (_currentLobby != null && NetworkManager.Singleton.IsHost)
+        {
+            _heartbeatTimer -= Time.deltaTime;
+            if (_heartbeatTimer <= 0f)
+            {
+                _heartbeatTimer = 15f;
+                LobbyService.Instance.SendHeartbeatPingAsync(_currentLobby.Id);
+            }
+        }
     }
 
     private async Task InitializeUnityServices()
@@ -42,7 +59,7 @@ public class RelayManager : MonoBehaviour
     // -------------------------
     // 🔴 Host (JoinCode 생성)
     // -------------------------
-    public async Task<string> StartHost()
+    /*public async Task<string> StartHost()
     {
         try
         {
@@ -73,6 +90,44 @@ public class RelayManager : MonoBehaviour
             Debug.LogError("호스트 생성 실패");
             return null;
         }
+    }*/
+
+    public async Task<string> StartHostWithLobby()
+    {
+        try
+        {
+            if (_unityTransport == null)
+            {
+                _unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+            }
+
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4);
+            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+            _unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+            _unityTransport.SetRelayServerData(new Unity.Networking.Transport.Relay.RelayServerData(allocation, "dtls"));
+
+            CreateLobbyOptions options = new CreateLobbyOptions
+            {
+                IsPrivate = false,
+                Data = new Dictionary<string, DataObject>
+                {
+                    {"JoinCode", new DataObject(DataObject.VisibilityOptions.Public, joinCode)}
+                }
+            };
+
+            _currentLobby = await LobbyService.Instance.CreateLobbyAsync("MyRoom", 4, options);
+
+            NetworkManager.Singleton.StartHost();
+
+            Debug.Log($"호스트 & 로비 생성 완료! 코드 : {joinCode}");
+            return joinCode;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"호스트 생성 실패 : {e.Message}");
+            return null;
+        }
     }
 
     // -------------------------
@@ -80,11 +135,17 @@ public class RelayManager : MonoBehaviour
     // -------------------------
     public async Task StartClient(string joinCode)
     {
-        JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+        try
+        {
+            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            _unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+            _unityTransport.SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
 
-        RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
-
-        NetworkManager.Singleton.StartClient();
+            NetworkManager.Singleton.StartClient();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"클라이언트 접속 실패 : {e.Message}");
+        }
     }
 }
