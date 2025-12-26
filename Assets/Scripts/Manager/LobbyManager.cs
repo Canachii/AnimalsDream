@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LobbyManager : NetworkBehaviour
 {
     [SerializeField] private Button startBtn;
+    [SerializeField] private Text playerText;
     [SerializeField] private Text playerListText;
 
     // 서버에서 관리하고 모든 클라이언트에게 동기화되는 리스트
@@ -96,6 +97,11 @@ public class LobbyManager : NetworkBehaviour
             bool isHost = player.ClientId == NetworkManager.ServerClientId;
             string listText = isHost ? "(호스트)" : "";
             playerListText.text += $"{player.PlayerName}{listText}\n";
+        }
+
+        if (playerText != null)
+        {
+            playerText.text = $"접속 중인 플레이어 : {_players.Count}명";
         }
     }
 }

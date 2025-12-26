@@ -18,6 +18,8 @@ public class RelayManager : MonoBehaviour
     private Lobby _currentLobby;
     private float _heartbeatTimer;
 
+    public Lobby JoinedLobby => _currentLobby;
+
     private async void Awake()
     {
         if (Instance == null)
@@ -119,6 +121,7 @@ public class RelayManager : MonoBehaviour
             _currentLobby = await LobbyService.Instance.CreateLobbyAsync("MyRoom", 4, options);
 
             NetworkManager.Singleton.StartHost();
+            NetworkManager.Singleton.StartClient();
 
             Debug.Log($"호스트 & 로비 생성 완료! 코드 : {joinCode}");
             return joinCode;
