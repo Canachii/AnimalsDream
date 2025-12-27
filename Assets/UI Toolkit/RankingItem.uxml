@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="RankingItem" style="flex-direction: row; justify-content: space-around; align-items: center; height: 50px;">
+        <ui:Label name="Rank" text="1" style="width: 160px; -unity-text-align: middle-center; color: rgb(255, 255, 255); font-size: 30px; -unity-font-definition: url('project://database/Assets/Fonts/NANUMGOTHICBOLD.TTF?fileID=12800000&amp;guid=11c7692c5defc9e4daff7ddbbc7c3fb5&amp;type=3#NANUMGOTHICBOLD');" />
+        <ui:Label text="-" style="color: rgba(255, 255, 255, 0); font-size: 30px;" />
+        <ui:Label name="Name" text="Player" style="width: 160px; -unity-text-align: middle-center; color: rgb(255, 255, 255); font-size: 30px; -unity-font-definition: url('project://database/Assets/Fonts/NANUMGOTHICBOLD.TTF?fileID=12800000&amp;guid=11c7692c5defc9e4daff7ddbbc7c3fb5&amp;type=3#NANUMGOTHICBOLD');" />
+        <ui:Label text="-" style="color: rgba(255, 255, 255, 0); font-size: 30px;" />
+        <ui:Label name="Time" text="00:00" style="width: 160px; -unity-text-align: middle-center; color: rgb(255, 255, 255); font-size: 30px; -unity-font-definition: url('project://database/Assets/Fonts/NANUMGOTHICBOLD.TTF?fileID=12800000&amp;guid=11c7692c5defc9e4daff7ddbbc7c3fb5&amp;type=3#NANUMGOTHICBOLD');" />
+        <ui:Label text="-" style="color: rgba(255, 255, 255, 0); font-size: 30px;" />
+        <ui:Label name="Death" text="0" style="width: 160px; -unity-text-align: middle-center; color: rgb(255, 255, 255); font-size: 30px; -unity-font-definition: url('project://database/Assets/Fonts/NANUMGOTHICBOLD.TTF?fileID=12800000&amp;guid=11c7692c5defc9e4daff7ddbbc7c3fb5&amp;type=3#NANUMGOTHICBOLD');" />
+    </ui:VisualElement>
+</ui:UXML>
