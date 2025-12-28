@@ -1,0 +1,13 @@
+.unity-button {
+    transition-property: scale;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
+}
+
+.unity-button:hover {
+    scale: 1.1 1.1;
+}
+
+.unity-button:active {
+    scale: 1 1;
+}
