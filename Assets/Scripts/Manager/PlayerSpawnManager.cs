@@ -1,28 +1,20 @@
-using UnityEngine;
-using Unity.Netcode;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SceneManagement;
+using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerSpawnManager : MonoBehaviour
 {
-    [SerializeField] private GameObject playerPrefab;
-    private List<Transform> spawnPoints = new List<Transform>();
-    private int nextSpawnIndex = 0;
-
     private const string GameSceneName = "GameScene";
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private List<GameObject> characterPrefabs = new List<GameObject>();
+    private int nextSpawnIndex = 0;
+    private List<Transform> spawnPoints = new();
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-    }
-
-    public void InitializeSpawnManager()
-    {
-        if (!NetworkManager.Singleton.IsServer) return;
-
-        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
     }
 
     private void OnDestroy()
@@ -33,18 +25,25 @@ public class PlayerSpawnManager : MonoBehaviour
         }
     }
 
+    public void InitializeSpawnManager()
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+    }
+
     private void FindSpawnPoints()
     {
         GameObject[] found = GameObject.FindGameObjectsWithTag("SpawnPoint");
         if (found.Length == 0)
         {
-            Debug.LogWarning("¾À¿¡ SpawnPoint ÅÂ±×¸¦ °¡Áø ¿ÀºêÁ§Æ®°¡ ¾øÀ½");
+            Debug.LogWarning("ì”¬ì— SpawnPoint íƒœê·¸ë¥¼ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ê°€ ì—†ìŒ");
             spawnPoints.Clear();
             return;
         }
 
         spawnPoints = found.Select(go => go.transform).OrderBy(t => t.name).ToList();
-        Debug.Log($"ÃÑ {spawnPoints.Count}°³ÀÇ ½ºÆùÆ÷ÀÎÆ®¸¦ Ã£¾Ò½À´Ï´Ù");
+        Debug.Log($"ì´ {spawnPoints.Count}ê°œì˜ ìŠ¤í°í¬ì¸íŠ¸ë¥¼ ì°¾ì•˜ìŠµë‹ˆë‹¤");
     }
 
     public void SpawnAllConnectedPlayers()
@@ -53,7 +52,7 @@ public class PlayerSpawnManager : MonoBehaviour
 
         FindSpawnPoints();
 
-        // ¿¬°áµÈ ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡°Ô ½ºÆù ¸í·É
+        // ì—°ê²°ëœ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ê²Œ ìŠ¤í° ëª…ë ¹
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
         {
             if (NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId) == null)
@@ -68,7 +67,7 @@ public class PlayerSpawnManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer &&
             SceneManager.GetActiveScene().name == GameSceneName)
         {
-            Debug.Log($"Late Join Å¬¶óÀÌ¾ğÆ® {clientId} °¨Áö. ½ºÆù ¿äÃ»");
+            Debug.Log($"Late Join í´ë¼ì´ì–¸íŠ¸ {clientId} ê°ì§€. ìŠ¤í° ìš”ì²­");
             SpawnPlayerForClient(clientId);
         }
     }
@@ -77,7 +76,7 @@ public class PlayerSpawnManager : MonoBehaviour
     {
         if (!NetworkManager.Singleton.IsServer) return;
 
-        // ½ºÆù À§Ä¡ °áÁ¤
+        // ìŠ¤í° ìœ„ì¹˜ ê²°ì •
         Transform spawnPos;
         if (spawnPoints.Count > 0)
         {
@@ -88,20 +87,34 @@ public class PlayerSpawnManager : MonoBehaviour
         {
             spawnPos = new GameObject().transform;
             spawnPos.position = Vector3.zero;
-            Debug.LogWarning("½ºÆùÆ÷ÀÎÆ®°¡ ¾ø¾î¼­ (0,0,0)¿¡ ½ºÆùÇÕ´Ï´Ù.");
+            Debug.LogWarning("ìŠ¤í°í¬ì¸íŠ¸ê°€ ì—†ì–´ì„œ (0,0,0)ì— ìŠ¤í°í•©ë‹ˆë‹¤.");
         }
 
-        // ÇÃ·¹ÀÌ¾î ÇÁ¸®ÆÕ ÀÎ½ºÅÏ½ºÈ­
-        GameObject playerObj = Instantiate(playerPrefab, spawnPos.position, spawnPos.rotation);
+        // í”Œë ˆì´ì–´ í”„ë¦¬íŒ¹ ì¸ìŠ¤í„´ìŠ¤í™”
+        GameObject selectedPrefab = playerPrefab;
+
+        if (characterPrefabs != null && characterPrefabs.Count > 0)
+        {
+            int randomIndex = Random.Range(0, characterPrefabs.Count);
+            selectedPrefab = characterPrefabs[randomIndex];
+        }
+
+        if (selectedPrefab == null)
+        {
+            Debug.LogError("SpawnPlayerForClient: No player prefab assigned!");
+            return;
+        }
+
+        GameObject playerObj = Instantiate(selectedPrefab, spawnPos.position, spawnPos.rotation);
 
         NetworkObject netObj = playerObj.GetComponent<NetworkObject>();
         if (netObj == null)
         {
-            Debug.LogError("ÇÃ·¹ÀÌ¾î ÇÁ¸®ÆÕ¿¡ NetworkObject ÄÄÆ÷³ÍÆ®°¡ ¾øÀ½");
+            Debug.LogError("í”Œë ˆì´ì–´ í”„ë¦¬íŒ¹ì— NetworkObject ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŒ");
             return;
         }
 
         netObj.SpawnAsPlayerObject(clientId, true);
-        Debug.Log($"Å¬¸®¾ğÆ® {clientId} ÇÃ·¹ÀÌ¾î ½ºÆù ¼º°ø");
+        Debug.Log($"í´ë¼ì´ì–¸íŠ¸ {clientId} í”Œë ˆì´ì–´ ìŠ¤í° ì„±ê³µ");
     }
 }
