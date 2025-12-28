@@ -8,7 +8,6 @@ public class PlayerInputHandler : NetworkBehaviour
 
     private GameFlow gameFlow;
 
-    public Vector2 MoveInput {  get; private set; }
 
     //private PlayerInput playerInput;
     private InputAction moveAction;
@@ -20,6 +19,14 @@ public class PlayerInputHandler : NetworkBehaviour
 
     public bool JumpPressed => jumpPressed;
     public bool SkillPressed => skillPressed;
+
+
+
+    public Vector2 RawMoveInput { get; private set; }
+
+    public Vector2 MoveInput => IsMoveInverted ? -RawMoveInput : RawMoveInput;
+    private float invertMoveEndTime = -1f;
+    public bool IsMoveInverted => Time.time < invertMoveEndTime;
 
     public override void OnNetworkSpawn()
     {
@@ -88,6 +95,8 @@ public class PlayerInputHandler : NetworkBehaviour
         moveAction.Disable();
         skillAction.Disable();
         jumpAction.Disable();
+
+        RawMoveInput = Vector2.zero;
     }
 
     public void OnRespawnStarted()
@@ -106,8 +115,6 @@ public class PlayerInputHandler : NetworkBehaviour
         // TODO: Add camera lock feature.
     }
 
-
-
     private void LateUpdate()
     {
         ResetFrameInputFlags();
@@ -121,7 +128,7 @@ public class PlayerInputHandler : NetworkBehaviour
     //input Key: 
     public void OnMove(InputValue value)
     {
-        MoveInput = value.Get<Vector2>();
+        RawMoveInput = value.Get<Vector2>();
     }
 
     //input Key: Space
@@ -136,5 +143,11 @@ public class PlayerInputHandler : NetworkBehaviour
     {
         if (!value.isPressed) return;
         skillPressed = true;
+    }
+
+
+    public void ApplyMoveInvert(float duration)
+    {
+        invertMoveEndTime = Mathf.Max(invertMoveEndTime, Time.time + duration);
     }
 }
