@@ -7,7 +7,13 @@ public class BeetleActiveSkill : Skill
 
     [Header("Hitbox Settings")]
     public Vector3 biteBoxSize = new Vector3(2f, 1.5f, 2f);
-    public float biteOffset = 1.0f;
+
+    [Tooltip("캐릭터 앞쪽으로 얼마나 나갈지")]
+    public float biteForwardOffset = 1.0f;
+
+    [Tooltip("캐릭터 발밑 기준으로 얼마나 위로 올릴지")]
+    public float biteHeightOffset = 0.5f;
+
     public LayerMask targetLayer;
 
     private BeetlePassiveSkill connectedPassive;
@@ -17,13 +23,6 @@ public class BeetleActiveSkill : Skill
         connectedPassive = GetComponent<BeetlePassiveSkill>();
     }
 
-    private void Reset()
-    {
-        cooldown = 8.0f;
-        skillName = "Vicious Bite";
-        description = "Bites enemies in front, immobilizing them directly.";
-    }
-
     protected override void OnUse(PlayerController user)
     {
         PerformBite(user);
@@ -31,48 +30,56 @@ public class BeetleActiveSkill : Skill
 
     private void PerformBite(PlayerController user)
     {
-        // 공격 범위 계산 (내 앞쪽)
-        Vector3 center = transform.position + transform.forward * biteOffset;
+        // [수정] 중심점 계산: 내 위치 + (앞으로) + (위로)
+        Vector3 center = transform.position
+                         + (transform.forward * biteForwardOffset)
+                         + (Vector3.up * biteHeightOffset);
 
-        // 범위 내의 모든 콜라이더 검출
-        Collider[] hitColliders = Physics.OverlapBox(center, biteBoxSize / 2, transform.rotation, targetLayer);
+        // 1. 물리 충돌 감지
+        Collider[] allColliders = Physics.OverlapBox(center, biteBoxSize / 2, transform.rotation);
 
         int hitCount = 0;
 
-        foreach (var col in hitColliders)
+        foreach (var col in allColliders)
         {
-            // 나 자신은 물면 안 됨
+
             if (col.gameObject == user.gameObject) continue;
 
-            // 상대방의 PlayerController 가져오기
-            PlayerController target = col.GetComponent<PlayerController>();
+            if (((1 << col.gameObject.layer) & targetLayer) == 0) continue;
 
-            if (target != null)
+            // PlayerMovement 체크
+            PlayerMovement targetMovement = col.GetComponent<PlayerMovement>();
+            if (targetMovement != null)
             {
-                // 함수 직접 호출 (상대방을 멈춤)
-                target.ApplyCrowdControl(stunDuration);
-
+                PlayerController targetController = col.GetComponent<PlayerController>();
+                if (targetController != null)
+                {
+                    targetController.ApplyCrowdControl(stunDuration);
+                    Debug.Log($" 플레이어({col.name}) 물기 성공!");
+                }
+                else
+                {
+                    Debug.Log($" 더미({col.name}) 물기 성공!");
+                }
                 hitCount++;
-                Debug.Log($"[{skillName}] {target.name} 물기 성공!");
             }
         }
 
-        // 한 명이라도 물었다면 패시브(이속 증가) 발동
         if (hitCount > 0 && connectedPassive != null)
         {
             connectedPassive.OnBiteSuccess(hitCount);
         }
-        else
-        {
-            Debug.Log($"[{skillName}] 빗나감 (No targets hit)");
-        }
     }
 
-    // 에디터에서 공격 범위를 눈으로 확인하기 위한 기즈모
+    // 에디터에서 눈으로 범위 확인하기
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(1, 0, 0, 0.5f);
-        Vector3 center = transform.position + transform.forward * biteOffset;
+
+        Vector3 center = transform.position
+                         + (transform.forward * biteForwardOffset)
+                         + (Vector3.up * biteHeightOffset);
+
         Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
         Gizmos.DrawCube(Vector3.zero, biteBoxSize);
         Gizmos.DrawWireCube(Vector3.zero, biteBoxSize);

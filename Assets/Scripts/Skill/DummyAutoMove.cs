@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerController))]
 public class DummyAutoMove : MonoBehaviour
 {
     private PlayerMovement targetMovement;
@@ -17,7 +16,7 @@ public class DummyAutoMove : MonoBehaviour
     public float minSpeed = 2.0f;
     public float maxSpeed = 8.0f;
 
-    [Header("Area Settings")]
+    [Header("Area Settings (플레인 범위)")]
     [Tooltip("이동 가능한 영역의 크기 (X: 좌우 폭, Y: 앞뒤 길이)")]
     public Vector2 areaSize = new Vector2(10f, 20f);
 
