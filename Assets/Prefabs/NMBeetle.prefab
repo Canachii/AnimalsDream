@@ -8445,7 +8445,7 @@ GameObject:
   - component: {fileID: 6123014846417323442}
   - component: {fileID: 1190384190323134064}
   m_Layer: 0
-  m_Name: Spider
+  m_Name: NMBeetle
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
