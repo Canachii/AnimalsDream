@@ -12,19 +12,26 @@ public class DummyAutoMove : MonoBehaviour
     [Header("Settings")]
     public float changeDirectionTime = 3f;
 
+    [Header("Random Speed Settings")]
+    public float minSpeed = 2.0f;
+    public float maxSpeed = 8.0f;
+
+    private float currentRandomSpeed;
+
     void Start()
     {
         targetMovement = GetComponent<PlayerMovement>();
         rb = GetComponent<Rigidbody>();
+
+        currentRandomSpeed = (minSpeed + maxSpeed) / 2;
 
         StartCoroutine(ChangeDirectionRoutine());
     }
 
     void FixedUpdate()
     {
-        float currentSpeed = targetMovement.moveSpeed;
+        Vector3 moveStep = moveDirection * currentRandomSpeed * Time.fixedDeltaTime;
 
-        Vector3 moveStep = moveDirection * currentSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + moveStep);
 
         if (moveDirection != Vector3.zero)
@@ -38,9 +45,12 @@ public class DummyAutoMove : MonoBehaviour
     {
         while (true)
         {
-            float x = Random.Range(-1f, 1f);
-            float z = Random.Range(-1f, 1f);
-            moveDirection = new Vector3(x, 0, z).normalized;
+            float z = Random.value > 0.5f ? 1f : -1f;
+            moveDirection = new Vector3(0, 0, z).normalized;
+
+            currentRandomSpeed = Random.Range(minSpeed, maxSpeed);
+
+            // Debug.Log($"[Dummy] Dir: {z}, Speed: {currentRandomSpeed:F1}");
 
             yield return new WaitForSeconds(changeDirectionTime);
         }
