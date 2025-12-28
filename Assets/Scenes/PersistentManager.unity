@@ -169,11 +169,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03fd8bf06894174aab4d0dc13742a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkMangerUI
-  hostBtn: {fileID: 2143056636}
-  clientBtn: {fileID: 1940101741}
-  joinBtn: {fileID: 1243579918}
+  lobbyPanel: {fileID: 0}
+  roomPanel: {fileID: 0}
+  createRoomBtn: {fileID: 0}
   joinCodeInput: {fileID: 2045857338}
   joinCodeText: {fileID: 1535969793}
+  joinBtn: {fileID: 1243579918}
+  copyBtn: {fileID: 0}
+  playerListText: {fileID: 0}
+  startBtn: {fileID: 0}
 --- !u!114 &107323531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1042,7 +1046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a509b6117c2144bab46680ab09f86a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnManager
-  playerPrefab: {fileID: 1987720806421918, guid: a2dfe588a42016e40892b72d31fd1cf6, type: 3}
+  playerPrefab: {fileID: 8454982150863327786, guid: f5363b3a45e9bbf449ae9f1d5ccc22ed, type: 3}
 --- !u!4 &1168740915
 Transform:
   m_ObjectHideFlags: 0

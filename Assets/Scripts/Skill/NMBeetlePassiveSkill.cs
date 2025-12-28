@@ -19,11 +19,9 @@ public class BeetlePassiveSkill : Skill
 
     public void OnBiteSuccess(int enemyCount)
     {
-        // 속도 증가량 계산 (3명 -> 0.45 -> 45%)
         float totalBonus = enemyCount * speedBonusPerHit;
         float targetMultiplier = 1.0f + totalBonus;
 
-        // 이미 버프 중이면 끄고 다시 시작 (시간 갱신)
         if (buffCoroutine != null) StopCoroutine(buffCoroutine);
 
         buffCoroutine = StartCoroutine(SpeedBuffRoutine(targetMultiplier));

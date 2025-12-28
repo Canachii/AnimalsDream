@@ -7,11 +7,7 @@ public class BeetleActiveSkill : Skill
 
     [Header("Hitbox Settings")]
     public Vector3 biteBoxSize = new Vector3(2f, 1.5f, 2f);
-
-    [Tooltip("캐릭터 앞쪽으로 얼마나 나갈지")]
     public float biteForwardOffset = 1.0f;
-
-    [Tooltip("캐릭터 발밑 기준으로 얼마나 위로 올릴지")]
     public float biteHeightOffset = 0.5f;
 
     public LayerMask targetLayer;
@@ -30,12 +26,11 @@ public class BeetleActiveSkill : Skill
 
     private void PerformBite(PlayerController user)
     {
-        // [수정] 중심점 계산: 내 위치 + (앞으로) + (위로)
         Vector3 center = transform.position
                          + (transform.forward * biteForwardOffset)
                          + (Vector3.up * biteHeightOffset);
 
-        // 1. 물리 충돌 감지
+        
         Collider[] allColliders = Physics.OverlapBox(center, biteBoxSize / 2, transform.rotation);
 
         int hitCount = 0;
@@ -47,7 +42,7 @@ public class BeetleActiveSkill : Skill
 
             if (((1 << col.gameObject.layer) & targetLayer) == 0) continue;
 
-            // PlayerMovement 체크
+            // PlayerMovement check
             PlayerMovement targetMovement = col.GetComponent<PlayerMovement>();
             if (targetMovement != null)
             {
@@ -71,7 +66,7 @@ public class BeetleActiveSkill : Skill
         }
     }
 
-    // 에디터에서 눈으로 범위 확인하기
+    // editor hitbox view
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(1, 0, 0, 0.5f);

@@ -8441,7 +8441,8 @@ GameObject:
   - component: {fileID: 2319874078339301046}
   - component: {fileID: 8243363413172804818}
   - component: {fileID: 8235824531995770743}
-  - component: {fileID: 1454286655713240059}
+  - component: {fileID: 5027688322868504836}
+  - component: {fileID: 3518269721820305961}
   - component: {fileID: 6123014846417323442}
   - component: {fileID: 1190384190323134064}
   m_Layer: 0
@@ -8675,7 +8676,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
-  camTransform: {fileID: 6680085334446259247}
+  camTransform: {fileID: 0}
   playerVcam: {fileID: 7560268668855090838}
 --- !u!114 &8243363413172804818
 MonoBehaviour:
@@ -8704,8 +8705,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSkillController
   skills:
-  - {fileID: 1454286655713240059}
---- !u!114 &1454286655713240059
+  - {fileID: 5027688322868504836}
+  - {fileID: 3518269721820305961}
+--- !u!114 &5027688322868504836
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8714,13 +8716,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 8454982150863327786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ade7cd74671bb44b766e2a75f344d2, type: 3}
+  m_Script: {fileID: 11500000, guid: 6efe9a3ba28dd2947a6efd2b1c84e0c2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestSkill
-  skillName: 
+  m_EditorClassIdentifier: Assembly-CSharp::NMBeetleActiveSkill
+  skillName: NMBite
   icon: {fileID: 0}
   cooldown: 1
   description: 
+  stunDuration: 2
+  biteBoxSize: {x: 2, y: 1.5, z: 2}
+  biteOffset: 1
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 512
+--- !u!114 &3518269721820305961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8454982150863327786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afffb3eebf4d791478f5302851dd263d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BeetlePassiveSkill
+  skillName: NMPassive
+  icon: {fileID: 0}
+  cooldown: 1
+  description: 
+  speedBuffDuration: 1.5
+  speedBonusPerHit: 0.15
 --- !u!114 &6123014846417323442
 MonoBehaviour:
   m_ObjectHideFlags: 0
