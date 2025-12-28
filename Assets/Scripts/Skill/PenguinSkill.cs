@@ -33,6 +33,10 @@ public class PenguinSkill : Skill
         {
             if (target != user.GetComponent<PlayerMovement>())
             {
+                var zebraShield = target.GetComponentInParent<ZebraPsssiveSkill>();
+                if (zebraShield != null && zebraShield.TryBlock(this, user.gameObject))
+                    continue;
+
                 StartCoroutine(ApplySlowSafely(target));
             }
         }
