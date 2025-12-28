@@ -26,12 +26,12 @@
             </ui:VisualElement>
             <ui:VisualElement name="HostMode" style="flex-grow: 1; display: none;">
                 <ui:Label text="접속중인 플레이어" name="ModeText" style="font-size: 24px; -unity-font-definition: url(&quot;project://database/Assets/Fonts/NANUMGOTHICBOLD.TTF?fileID=12800000&amp;guid=11c7692c5defc9e4daff7ddbbc7c3fb5&amp;type=3#NANUMGOTHICBOLD&quot;); margin-bottom: 30px;" />
-                <ui:ListView name="ListView" item-template="project://database/Assets/UI%20Toolkit/PlayerListItem.uxml?fileID=9197481963319205126&amp;guid=0e33440192e448941ba18cca2a62fc50&amp;type=3#PlayerListItem" style="flex-grow: 1; margin-bottom: 30px;" />
+                <ui:ListView fixed-item-height="100" name="ListView" item-template="project://database/Assets/UI%20Toolkit/PlayerListItem.uxml?fileID=9197481963319205126&amp;guid=0e33440192e448941ba18cca2a62fc50&amp;type=3#PlayerListItem" style="flex-grow: 1; margin-bottom: 30px;" />
                 <ui:Button text="플레이!" style="-unity-font-definition: url(&quot;project://database/Assets/Fonts/NANUMGOTHICEXTRABOLD.TTF?fileID=12800000&amp;guid=74d06353a15ef534e89de4fd96389110&amp;type=3#NANUMGOTHICEXTRABOLD&quot;); font-size: 96px; background-color: rgb(255, 255, 255); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; border-top-width: 4px; border-right-width: 4px; border-bottom-width: 4px; border-left-width: 4px;" />
             </ui:VisualElement>
             <ui:VisualElement name="JoinMode" style="flex-grow: 1; display: none;">
                 <ui:Label text="접속중인 플레이어" name="ModeText" style="font-size: 24px; -unity-font-definition: url(&quot;project://database/Assets/Fonts/NANUMGOTHICBOLD.TTF?fileID=12800000&amp;guid=11c7692c5defc9e4daff7ddbbc7c3fb5&amp;type=3#NANUMGOTHICBOLD&quot;); margin-bottom: 30px;" />
-                <ui:ListView name="ListView" item-template="project://database/Assets/UI%20Toolkit/PlayerListItem.uxml?fileID=9197481963319205126&amp;guid=0e33440192e448941ba18cca2a62fc50&amp;type=3#PlayerListItem" style="flex-grow: 1; margin-bottom: 30px;" />
+                <ui:ListView fixed-item-height="100" name="ListView" item-template="project://database/Assets/UI%20Toolkit/PlayerListItem.uxml?fileID=9197481963319205126&amp;guid=0e33440192e448941ba18cca2a62fc50&amp;type=3#PlayerListItem" style="flex-grow: 1; margin-bottom: 30px;" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="RoomCodeContainer" style="position: absolute; flex-grow: 1; bottom: 55px; left: 30px; display: none;">
