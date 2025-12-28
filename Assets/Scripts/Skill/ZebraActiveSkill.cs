@@ -21,7 +21,7 @@ public class ZebraActiveSkill : Skill
         {
             var zebraShield = target.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
             if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
-                return;
+                continue;
             StartCoroutine(ApplySkill(target));
         }
     }
