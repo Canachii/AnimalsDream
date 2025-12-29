@@ -1200,6 +1200,7 @@ GameObject:
   - component: {fileID: 3653743199480069864}
   - component: {fileID: 4617185948800477200}
   - component: {fileID: 8277000744775941054}
+  - component: {fileID: 6449943399526784574}
   m_Layer: 0
   m_Name: Penguin
   m_TagString: Player
@@ -1317,7 +1318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2227705747
+  GlobalObjectIdHash: 2612983159
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1511,6 +1512,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaterialHandler
   translucentMaterial: {fileID: 2100000, guid: a0b32d4db9327194997f88eccecb22d9, type: 2}
+  excludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &6449943399526784574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352763928063775421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4570dce21b7a70b4ab15958b305ba3ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PenguinPassiveFlockSkill
+  skillName: 
+  icon: {fileID: 0}
+  cooldown: 1
+  description: 
+  detectionRadius: 6
+  bonusPerPlayer:
+  - 0
+  - 0
+  - 0.1
+  - 0.2
+  flockParticles: {fileID: 686306083764514543, guid: 5357b7f40e1451744886942913efe75f, type: 3}
+  minParticleScale: 0.5
+  maxParticleScale: 2
 --- !u!1 &8156699869588700837
 GameObject:
   m_ObjectHideFlags: 0
