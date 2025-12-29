@@ -30,32 +30,40 @@ public class BeetleActiveSkill : Skill
                          + (transform.forward * biteForwardOffset)
                          + (Vector3.up * biteHeightOffset);
 
-        
+        // 필터 없이 일단 다 감지
         Collider[] allColliders = Physics.OverlapBox(center, biteBoxSize / 2, transform.rotation);
 
         int hitCount = 0;
 
         foreach (var col in allColliders)
         {
+            // 시전자 본인 무시
+            if (col.transform.root == user.transform.root) continue;
 
-            if (col.gameObject == user.gameObject) continue;
-
+            //. 레이어 체크 (벽이나 바닥 무시용)
             if (((1 << col.gameObject.layer) & targetLayer) == 0) continue;
 
-            // PlayerMovement check
-            PlayerMovement targetMovement = col.GetComponent<PlayerMovement>();
-            if (targetMovement != null)
+            bool isHit = false;
+
+            PlayerController targetController = col.GetComponentInParent<PlayerController>();
+            if (targetController != null)
             {
-                PlayerController targetController = col.GetComponent<PlayerController>();
-                if (targetController != null)
-                {
-                    targetController.ApplyCrowdControl(stunDuration);
-                    Debug.Log($" 플레이어({col.name}) 물기 성공!");
-                }
-                else
-                {
-                    Debug.Log($" 더미({col.name}) 물기 성공!");
-                }
+                targetController.ApplyCrowdControl(stunDuration);
+                Debug.Log($"[BeetleSkill] 플레이어 제어({targetController.name}) 차단 성공");
+                isHit = true;
+            }
+            //더미감지용(나중에지워도됨)
+            DummyAutoMove targetDummy = col.GetComponentInParent<DummyAutoMove>();
+            if (targetDummy != null)
+            {
+                targetDummy.ApplyStun(stunDuration);
+                Debug.Log($"[BeetleSkill] 더미 이동({targetDummy.name}) 차단 성공");
+                isHit = true;
+            }
+
+            // 둘 중 하나라도 걸렸으면 성공 카운트 증가
+            if (isHit)
+            {
                 hitCount++;
             }
         }
@@ -66,11 +74,9 @@ public class BeetleActiveSkill : Skill
         }
     }
 
-    // editor hitbox view
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(1, 0, 0, 0.5f);
-
         Vector3 center = transform.position
                          + (transform.forward * biteForwardOffset)
                          + (Vector3.up * biteHeightOffset);

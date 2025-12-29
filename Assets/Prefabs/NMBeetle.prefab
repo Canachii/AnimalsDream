@@ -8548,7 +8548,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &7744474028676343446
 MonoBehaviour:
@@ -8563,13 +8563,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
   GlobalObjectIdHash: 2513433365
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 2513433365
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
+  SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
@@ -8724,9 +8724,9 @@ MonoBehaviour:
   cooldown: 1
   description: 
   stunDuration: 2
-  biteBoxSize: {x: 2, y: 1.5, z: 2}
-  biteForwardOffset: 1
-  biteHeightOffset: 0.5
+  biteBoxSize: {x: 2, y: 1, z: 2}
+  biteForwardOffset: 1.8
+  biteHeightOffset: 0.7
   targetLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -8746,8 +8746,8 @@ MonoBehaviour:
   icon: {fileID: 0}
   cooldown: 1
   description: 
-  speedBuffDuration: 1.5
-  speedBonusPerHit: 0.15
+  buffDuration: 1.5
+  bonusPerStack: 0.15
 --- !u!114 &6123014846417323442
 MonoBehaviour:
   m_ObjectHideFlags: 0

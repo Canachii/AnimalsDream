@@ -13,12 +13,18 @@ public class BeetlePassiveSkill : Skill
     private void Awake()
     {
         movement = GetComponent<PlayerMovement>();
+        skillName = "Swarm Instinct";
     }
 
     protected override void OnUse(PlayerController user) { }
 
     public void OnBiteSuccess(int enemyCount)
     {
+        // 패시브 활성화 확인
+        Debug.Log($"[BeetlePassive] 패시브 발동 요청됨 (물린 적: {enemyCount}명)");
+
+        if (enemyCount <= 0) return;
+
         float totalBonus = enemyCount * speedBonusPerHit;
         float targetMultiplier = 1.0f + totalBonus;
 
@@ -29,17 +35,21 @@ public class BeetlePassiveSkill : Skill
 
     private IEnumerator SpeedBuffRoutine(float multiplier)
     {
-        Debug.Log($"[Passive] 대상 추격. 속도 {multiplier}배 증가");
+        Debug.Log($"[BeetlePassive] 이동 속도 증가 (x{multiplier})");
 
-        // PlayerMovement에 있는 속도 배율 함수 호출
-        if (movement != null) movement.SetMoveSpeedMultiplier(multiplier);
+        if (movement != null)
+        {
+            movement.SetMoveSpeedMultiplier(multiplier);
+        }
 
         yield return new WaitForSeconds(speedBuffDuration);
 
-        // 원상 복구
-        if (movement != null) movement.SetMoveSpeedMultiplier(1.0f);
+        if (movement != null)
+        {
+            movement.SetMoveSpeedMultiplier(1.0f);
+        }
 
-        Debug.Log("[Passive] 추격 종료.");
+        Debug.Log($"[BeetlePassive] 속도 정상화");
         buffCoroutine = null;
     }
 }
