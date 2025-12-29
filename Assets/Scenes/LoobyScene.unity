@@ -393,7 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a509b6117c2144bab46680ab09f86a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnManager
-  playerPrefab: {fileID: 2862419574038303875, guid: 00ebed1418911e447999328c08907025, type: 3}
+  playerPrefab: {fileID: 5908334692631958649, guid: 0427ccdb363e5f640a968fab4175f26a, type: 3}
 --- !u!4 &1168740915
 Transform:
   m_ObjectHideFlags: 0
