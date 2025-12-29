@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class MaterialHandler : MonoBehaviour
 {
     [SerializeField] private Material translucentMaterial;
+    [SerializeField] private LayerMask excludeLayers;
 
     private SkinnedMeshRenderer[] targets;     
     private Material[][] originalMaterials;    
@@ -21,7 +22,7 @@ public class MaterialHandler : MonoBehaviour
         List<SkinnedMeshRenderer> list = new List<SkinnedMeshRenderer>(all.Length);
         foreach (var r in all)
         {
-            if (r.GetComponentInParent<IgnoreMaterialHandler>() != null)
+            if (((1 << r.gameObject.layer) & excludeLayers) != 0)
                 continue;
 
             list.Add(r);
