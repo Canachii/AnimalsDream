@@ -65,6 +65,10 @@ public class HorseActiveSkill : Skill
         if (((1 << collision.gameObject.layer) & targetLayer) != 0)
         {
             if (collision.gameObject == gameObject) return;
+            
+            var zebraShield = collision.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
+            if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
+                return;
 
             Rigidbody targetRb = collision.gameObject.GetComponent<Rigidbody>();
             if (targetRb != null)

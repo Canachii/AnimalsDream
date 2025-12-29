@@ -1,27 +1,21 @@
-using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class LobbyManager : NetworkBehaviour
 {
-    [SerializeField] private Button startBtn;
-    [SerializeField] private Text playerText;
-    [SerializeField] private Text playerListText;
-
-    // 서버에서 관리하고 모든 클라이언트에게 동기화되는 리스트
+    //  構  클潔트 화풔 트
     private NetworkList<PlayerData> _players = new NetworkList<PlayerData>();
+    public NetworkList<PlayerData> Players => _players;
 
     private void Awake()
     {
-        _players = new NetworkList<PlayerData>();
     }
 
     public override void OnNetworkSpawn()
     {
         if (IsServer)
         {
-            // 새로운 플레이어 접속 시 이벤트 등록
+            // 恝 첨潔   遣트 
             NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnected;
 
@@ -30,17 +24,6 @@ public class LobbyManager : NetworkBehaviour
                 HandleClientConnected(client.ClientId);
             }
         }
-
-        // 리스트가 변할 때마다 UI 업데이트 함수 실행
-        _players.OnListChanged += (changeEvent) => UpdatePlayerListUI();
-
-        if (startBtn != null)
-        {
-            startBtn.gameObject.SetActive(IsServer);
-        }
-
-        // 초기 UI 업데이트
-        UpdatePlayerListUI();
     }
 
     public override void OnNetworkDespawn()
@@ -56,7 +39,7 @@ public class LobbyManager : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        // 이미 리스트에 해당 ID가 있는지 확인하여 중복 방지
+        // 譴 트 娩 ID 獵 확臼 揷 
         foreach (var player in _players)
         {
             if (player.ClientId == clientId) return;
@@ -82,26 +65,7 @@ public class LobbyManager : NetworkBehaviour
         _players.Add(new PlayerData
         {
             ClientId = clientId,
-            PlayerName = $"캐릭터 {clientId + 1}" // 추후 랜덤으로 배정될 캐릭터 이름으로 수정해야함
+            PlayerName = $"Player{clientId + 1}" //    캐 見 瞞
         });
-    }
-
-    private void UpdatePlayerListUI()
-    {
-        if (playerListText == null) return;
-
-        playerListText.text = "";
-
-        foreach (var player in _players)
-        {
-            bool isHost = player.ClientId == NetworkManager.ServerClientId;
-            string listText = isHost ? "(호스트)" : "";
-            playerListText.text += $"{player.PlayerName}{listText}\n";
-        }
-
-        if (playerText != null)
-        {
-            playerText.text = $"접속 중인 플레이어 : {_players.Count}명";
-        }
     }
 }

@@ -1,53 +1,65 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MaterialHandler : MonoBehaviour
 {
     [SerializeField] private Material translucentMaterial;
+    [SerializeField] private LayerMask excludeLayers;
 
-    private SkinnedMeshRenderer[] smr;
-    private Material originalMaterial;
+    private SkinnedMeshRenderer[] targets;     
+    private Material[][] originalMaterials;    
 
     private void Awake()
     {
-        smr = GetComponentsInChildren<SkinnedMeshRenderer>();
-        
-        if (smr == null)
+        var all = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+
+        if (all == null || all.Length == 0)
         {
             Debug.LogError("[MaterialHandler] SkinnedMeshRenderer not found in children.");
             return;
         }
 
-        originalMaterial = smr[0].sharedMaterial;
+        List<SkinnedMeshRenderer> list = new List<SkinnedMeshRenderer>(all.Length);
+        foreach (var r in all)
+        {
+            if (((1 << r.gameObject.layer) & excludeLayers) != 0)
+                continue;
+
+            list.Add(r);
+        }
+
+        targets = list.ToArray();
+        originalMaterials = new Material[targets.Length][];
+
+        for (int i = 0; i < targets.Length; i++)
+            originalMaterials[i] = targets[i].sharedMaterials;
     }
 
     public void ApplyTranslucent()
     {
-        if (smr == null) return;
+        if (targets == null || targets.Length == 0) return;
         if (translucentMaterial == null)
         {
             Debug.LogWarning("[MaterialHandler] translucentMaterial is not assigned.");
             return;
         }
 
-        foreach (var t in smr)
+        foreach (var r in targets)
         {
-            var mats = t.materials;
+            var mats = r.sharedMaterials; 
             for (int i = 0; i < mats.Length; i++)
                 mats[i] = translucentMaterial;
-            t.materials = mats;
+
+            r.sharedMaterials = mats;
         }
     }
+
     public void ApplyOriginal()
     {
-        if (smr == null) return;
-        if (originalMaterial == null ) return;
+        if (targets == null || targets.Length == 0) return;
+        if (originalMaterials == null) return;
 
-        foreach (var t in smr)
-        {
-            var mats = t.materials;
-            for (int i = 0; i < mats.Length; i++)
-                mats[i] = originalMaterial;
-            t.materials = mats;
-        }
+        for (int i = 0; i < targets.Length; i++)
+            targets[i].sharedMaterials = originalMaterials[i];
     }
 }
