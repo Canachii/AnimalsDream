@@ -18,6 +18,9 @@ public class DummyAutoMove : MonoBehaviour
     public Vector2 areaSize = new Vector2(10f, 20f);
     public Vector3 areaOffset = Vector3.zero;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject stunEffectObject;
+
     private float currentRandomSpeed;
     private Vector3 startPosition;
 
@@ -86,11 +89,15 @@ public class DummyAutoMove : MonoBehaviour
         isStunned = true;
         if (rb != null) rb.linearVelocity = Vector3.zero;
 
+        if (stunEffectObject != null) stunEffectObject.SetActive(true);
+
         Debug.Log($"[DummyAutoMove] ∏ÿ√„ Ω√¿€");
 
         yield return new WaitForSeconds(duration);
 
         isStunned = false;
+        if (stunEffectObject != null) stunEffectObject.SetActive(false);
+
         Debug.Log($"[DummyAutoMove] ¥ŸΩ√ ¿Ãµø Ω√¿€");
     }
 

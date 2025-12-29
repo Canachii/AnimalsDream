@@ -65,7 +65,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     // [Server] 서버가 받아서 모든 클라이언트(특히 피해자)에게 전파
-    [ServerRpc(RequireOwnership = false)]
+    [Rpc(SendTo.Everyone)]
     private void ApplyCrowdControlServerRpc(float duration)
     {
         ApplyCrowdControlClientRpc(duration);

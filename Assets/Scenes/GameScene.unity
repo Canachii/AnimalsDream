@@ -802,6 +802,7 @@ MonoBehaviour:
   maxSpeed: 8
   areaSize: {x: 10, y: 10}
   areaOffset: {x: 0, y: 0, z: 0}
+  stunEffectObject: {fileID: 0}
 --- !u!1 &1336687986
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,6 +973,7 @@ MonoBehaviour:
   maxSpeed: 8
   areaSize: {x: 10, y: 10}
   areaOffset: {x: 0, y: 0, z: 0}
+  stunEffectObject: {fileID: 0}
 --- !u!1001 &1686375642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1111,6 +1113,7 @@ MonoBehaviour:
   maxSpeed: 8
   areaSize: {x: 10, y: 10}
   areaOffset: {x: 0, y: 0, z: 0}
+  stunEffectObject: {fileID: 0}
 --- !u!1001 &1900640713
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1250,6 +1253,7 @@ MonoBehaviour:
   maxSpeed: 8
   areaSize: {x: 10, y: 10}
   areaOffset: {x: 0, y: 0, z: 0}
+  stunEffectObject: {fileID: 0}
 --- !u!1 &2068516150
 GameObject:
   m_ObjectHideFlags: 0

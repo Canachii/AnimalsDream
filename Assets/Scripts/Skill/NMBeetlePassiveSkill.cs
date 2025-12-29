@@ -10,17 +10,24 @@ public class BeetlePassiveSkill : Skill
     private PlayerMovement movement;
     private Coroutine buffCoroutine;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject speedEffectObject;
+
     private void Awake()
     {
         movement = GetComponent<PlayerMovement>();
-        skillName = "Swarm Instinct";
+        skillName = " ";
+
+        if (speedEffectObject != null)
+        {
+            speedEffectObject.SetActive(false);
+        }
     }
 
     protected override void OnUse(PlayerController user) { }
 
     public void OnBiteSuccess(int enemyCount)
     {
-        // 패시브 활성화 확인
         Debug.Log($"[BeetlePassive] 패시브 발동 요청됨 (물린 적: {enemyCount}명)");
 
         if (enemyCount <= 0) return;
@@ -37,6 +44,8 @@ public class BeetlePassiveSkill : Skill
     {
         Debug.Log($"[BeetlePassive] 이동 속도 증가 (x{multiplier})");
 
+        if (speedEffectObject != null) speedEffectObject.SetActive(true);
+
         if (movement != null)
         {
             movement.SetMoveSpeedMultiplier(multiplier);
@@ -48,6 +57,8 @@ public class BeetlePassiveSkill : Skill
         {
             movement.SetMoveSpeedMultiplier(1.0f);
         }
+
+        if (speedEffectObject != null) speedEffectObject.SetActive(false);
 
         Debug.Log($"[BeetlePassive] 속도 정상화");
         buffCoroutine = null;
