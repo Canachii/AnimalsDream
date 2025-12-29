@@ -11,7 +11,6 @@ public class PlayerController : NetworkBehaviour
     private PlayerSkillController skillController;
     private PlayerInputHandler input;
 
-    // 행동 불가(CC) 상태 플래그
     private bool isCrowdControlled = false;
 
     private void Awake()
@@ -38,7 +37,6 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        // --- 평소 상태 ---
         movement.SetMoveInput(input.MoveInput);
 
         if (input.JumpPressed)
@@ -53,7 +51,7 @@ public class PlayerController : NetworkBehaviour
         // 1. 네트워크에 스폰된 상태인지 확인 (멀티플레이어)
         if (NetworkObject != null && NetworkObject.IsSpawned)
         {
-            // 공격자가 서버에게 요청 (RequireOwnership = false 필수)
+            // 공격자가 서버에게
             ApplyCrowdControlServerRpc(duration);
         }
         else
@@ -86,11 +84,9 @@ public class PlayerController : NetworkBehaviour
         StopCoroutine("CrowdControlRoutine");
 
         isCrowdControlled = true;
-        // Debug.Log($"[{name}] 으악! 움직일 수 없어! ({duration}초)");
 
         yield return new WaitForSeconds(duration);
 
         isCrowdControlled = false;
-        // Debug.Log($"[{name}] 이제 움직일 수 있어.");
     }
 }
