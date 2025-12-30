@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using Unity.Netcode;
 using AnimalsDream.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public class GameHUDController : MonoBehaviour
 {
@@ -27,10 +28,16 @@ public class GameHUDController : MonoBehaviour
     private Label skill2Text;
     private VisualElement skill1Icon;
     private VisualElement skill2Icon;
+    private Label countdownText;
 
     private void OnEnable()
     {
         uiDocument = GetComponent<UIDocument>();
+        var root = uiDocument != null ? uiDocument.rootVisualElement : null;
+        countdownText = root?.Q<Label>("Countdown");
+        if (countdownText != null)
+            countdownText.style.display = DisplayStyle.None;
+
         gameFlow = FindAnyObjectByType<GameFlow>();
         raceManager = FindAnyObjectByType<RaceManager>();
 
@@ -45,15 +52,38 @@ public class GameHUDController : MonoBehaviour
         {
             gameFlow.OnMatchFinished += SwitchToResultUI;
 
-            // 혹시 이미 Finished 상태로 들어온 경우(늦게 진입/리플레이 등) 즉시 반영
+            gameFlow.OnCountdownChanged += HandleCountdownUI;
+
+            // 현재값 1회 반영(늦게 초기화되더라도 맞춰짐)
+            HandleCountdownUI(gameFlow.CountdownSec);
+
             if (gameFlow.State == MatchState.Finished)
                 SwitchToResultUI();
         }
     }
+
     private void OnDisable()
     {
         if (gameFlow != null)
+        {
             gameFlow.OnMatchFinished -= SwitchToResultUI;
+            gameFlow.OnCountdownChanged -= HandleCountdownUI;
+        }
+    }
+    private void HandleCountdownUI(int sec)
+    {
+        if (countdownText == null) return;
+
+        // 카운트다운 중(3,2,1)만 표시
+        if (sec >= 1)
+        {
+            countdownText.text = sec.ToString();
+            countdownText.style.display = DisplayStyle.Flex;
+        }
+        else
+        {
+            countdownText.style.display = DisplayStyle.None;
+        }
     }
 
     private void SwitchToResultUI()
@@ -155,6 +185,7 @@ public class GameHUDController : MonoBehaviour
         skill2Overlay = root.Q<RadialProgressElement>("Skill2Overlay");
         skill2Text = root.Q<Label>("Skill2CooldownText");
         skill2Icon = root.Q<VisualElement>("Skill2");
+
 
         if (localPlayerController != null && localPlayerController.playerIcon != null)
         {

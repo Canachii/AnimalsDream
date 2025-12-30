@@ -23,5 +23,6 @@
                 <ui:Label name="Skill2CooldownText" text="12" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; -unity-text-align: middle-center; color: white; font-size: 40px; -unity-font-style: bold; display: none;" />
             </ui:VisualElement>
         </ui:VisualElement>
+        <ui:Label text="GO" name="Countdown" double-click-selects-word="true" style="-unity-text-align: middle-center; white-space: pre-wrap; text-overflow: ellipsis; height: 592px; font-size: 300px; -unity-text-outline-color: rgb(255, 255, 255); -unity-font-definition: url(&quot;project://database/Assets/ExternalAssets/CorePro/Flat%20Pack/Fonts/lato/TTF/Lato-Black.ttf?fileID=12800000&amp;guid=d2f070cd5ff727444b009fe4caa8fe76&amp;type=3#Lato-Black&quot;); color: rgb(255, 255, 255);" />
     </ui:VisualElement>
 </ui:UXML>

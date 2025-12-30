@@ -36,6 +36,9 @@ public class GameFlow : NetworkBehaviour
     public event Action OnMatchStarted;
     public event Action OnMatchFinished;
     public event Action OnReachedGoalLine;
+    public event Action<int> OnCountdownChanged; // 3,2,1,0 매번 UI 갱신용
+    public int CountdownSec => netCountdownSec.Value;
+
 
     public float RemainingTime
     {
@@ -67,6 +70,7 @@ public class GameFlow : NetworkBehaviour
 
         // 늦게 들어온 클라도 현재 상태 1번 반영
         OnStateChanged?.Invoke(netState.Value);
+        OnCountdownChanged?.Invoke(netCountdownSec.Value);
     }
 
     public override void OnNetworkDespawn()
@@ -138,6 +142,7 @@ public class GameFlow : NetworkBehaviour
 
     private void HandleCountdownChanged(int prev, int next)
     {
+        OnCountdownChanged?.Invoke(next);
         // next: 3,2,1,0 으로 떨어짐
         if (prev <= 0 && next > 0)
             OnCountdownTick?.Invoke(next);
