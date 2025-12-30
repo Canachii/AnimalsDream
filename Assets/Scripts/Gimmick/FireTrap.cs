@@ -4,6 +4,7 @@ public class FireTrap : TimerTrapController
 {
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private AudioSource _audioSource;
+    private Collider _collider;
 
     protected override void OnActivate()
     {
@@ -20,6 +21,7 @@ public class FireTrap : TimerTrapController
         base.Awake();
         if (trapCollider != null)
             trapCollider.enabled = false;
+        _collider = GetComponent<Collider>();
     }
 
     protected override void Start()
@@ -48,13 +50,13 @@ public class FireTrap : TimerTrapController
     {
         _particleSystem.Stop();
         _audioSource.Stop();
-        gameObject.SetActive(false);
+        _collider.enabled =false;
     }
 
     private void Play()
     {
         _particleSystem.Play();
         _audioSource.Play();
-        gameObject.SetActive(true);
+        _collider.enabled = true;
     }
 }
