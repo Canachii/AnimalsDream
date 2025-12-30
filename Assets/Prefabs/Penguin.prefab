@@ -1481,7 +1481,7 @@ MonoBehaviour:
   description: 
   slowRatio: 0.5
   duration: 4
-  slowEffectPrefab: {fileID: 0}
+  slowEffectPrefab: {fileID: 1920325297268671343, guid: 5e9f6d6cecb45c04fab32e606e841f22, type: 3}
   effectScale: 2
 --- !u!114 &4617185948800477200
 MonoBehaviour:
@@ -1516,6 +1516,7 @@ MonoBehaviour:
   excludeLayers:
     serializedVersion: 2
     m_Bits: 0
+
 --- !u!114 &6449943399526784574
 MonoBehaviour:
   m_ObjectHideFlags: 0

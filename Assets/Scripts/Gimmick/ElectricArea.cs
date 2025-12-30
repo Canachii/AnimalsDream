@@ -30,6 +30,7 @@ public class ElectricArea : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
         if (playerInside) return;
+        AudioManager.Instance?.PlayAtPoint(SoundId.Trap_Warning,  transform.position);
 
         playerInside = true;
         loop = StartCoroutine(LightningLoop());
@@ -64,6 +65,7 @@ public class ElectricArea : MonoBehaviour
             Vector3 pos = RandomPoint();
             lightnings[i].transform.position = pos;
             lightnings[i].SetActive(true);
+            AudioManager.Instance?.PlayAtPoint(SoundId.Trap_Thunder, lightnings[i].transform.position);
         }
 
         yield return new WaitForSeconds(strikeActiveTime);

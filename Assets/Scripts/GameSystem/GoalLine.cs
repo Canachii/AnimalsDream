@@ -19,7 +19,8 @@ public class GoalLine : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.gameObject.CompareTag("Player")) return;
-        
+
+        AudioManager.Instance?.PlayAtPoint(SoundId.Race_GoalIn, other.transform.position);
         var progress = other.GetComponent<PlayerRaceProgress>();
         if(progress == null)return;
 

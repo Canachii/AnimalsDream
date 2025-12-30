@@ -53,6 +53,7 @@ public class PenguinSkill : Skill
         {
             activeEffect = Instantiate(slowEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
             activeEffect.transform.localScale = Vector3.one * effectScale;
+            AudioManager.Instance?.PlayAtPoint(SoundId.Event_PenguinSkill, activeEffect.transform.position);
         }
 
         // Wait for duration

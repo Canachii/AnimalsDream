@@ -35,6 +35,7 @@ public class ZebraActiveSkill : Skill
         {
             activeEffect = Instantiate(skillEffectPrefab, target.transform);
             activeEffect.transform.localScale = Vector3.one * effectScale;
+            AudioManager.Instance?.PlayAtPoint(SoundId.Event_ZebraSkill, activeEffect.transform.position);
         }
 
         yield return new WaitForSeconds(duration);

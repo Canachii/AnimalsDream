@@ -22,6 +22,8 @@ public class JumpingTrap : TriggerTrapController
 
     private IEnumerator Jump(Rigidbody rb)
     {
+        AudioManager.Instance?.PlayAtPoint(SoundId.Trap_JumpPad, transform.position);
+
         Vector3 enter = rb.linearVelocity;
         Vector3 horizontalDir = new Vector3(enter.x, 0f, enter.z);
 

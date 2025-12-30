@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8376370491574289854}
   - component: {fileID: 2549218767441204323}
   - component: {fileID: 8281856401955757842}
+  - component: {fileID: -6125942246642677860}
   m_Layer: 0
   m_Name: FireTrap
   m_TagString: Untagged
@@ -33,7 +34,7 @@ Transform:
   m_LocalScale: {x: 1.4031, y: 1.4031, z: 1.4031}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 897744947840882804}
+  - {fileID: 1799198441392620292}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4831574947608873081
@@ -129,37 +130,19 @@ MonoBehaviour:
   trapDuration: 3
   _particleSystem: {fileID: 0}
   _audioSource: {fileID: 0}
---- !u!1 &9029025541595031854
-GameObject:
+--- !u!114 &-6125942246642677860
+MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 8829451551789304542, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
-  m_PrefabInstance: {fileID: 7093321234872043997}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 897744947840882804}
-  m_Layer: 0
-  m_Name: 'VFX_Fire_01_Big (Missing Prefab with guid: e91fa0fac941e714e8c4d5709097019f)'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &897744947840882804
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 8829451551789304537, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
-  m_PrefabInstance: {fileID: 7093321234872043997}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9029025541595031854}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.43214, y: 0.10076, z: 0.61646986}
-  m_LocalScale: {x: 0.59695, y: 0.59695, z: 0.59695}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6469563360828551541}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 1875174762676484971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2afdf7c5e7e03544ba2bca90b4969a1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillZone
+  respawnSystem: {fileID: 0}
 --- !u!1001 &7093321234872043997
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -265,3 +248,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
+--- !u!4 &1799198441392620292 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8829451551789304537, guid: e91fa0fac941e714e8c4d5709097019f, type: 3}
+  m_PrefabInstance: {fileID: 7093321234872043997}
+  m_PrefabAsset: {fileID: 0}

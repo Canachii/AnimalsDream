@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class RaceManager : MonoBehaviour
+public class RaceManager : NetworkBehaviour
 {
     private List<PlayerRaceProgress> players = new List<PlayerRaceProgress>();
     [SerializeField] private GameFlow gameFlow;
@@ -17,7 +18,7 @@ public class RaceManager : MonoBehaviour
     private void Awake()
     {
         if (!gameFlow) 
-        { 
+        {
             gameFlow = FindFirstObjectByType<GameFlow>();
             Debug.Assert(gameFlow, "[RaceManager] GameFlow reference missing.");
         }
@@ -69,15 +70,49 @@ public class RaceManager : MonoBehaviour
 
     public void Finish(PlayerRaceProgress p)
     {
+        if (p == null) return;
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogWarning("[RaceManager] NetworkManager.Singleton is null; cannot compute server time.");
+            return;
+        }
 
+        if (NetworkManager.Singleton.IsServer)
+        {
+            Debug.Log($"[RaceManager] 서버에서 Finish 처리: {p.name}");
+            FinishInternal(p);
+            return;
+        }
+
+        var netObj = p.GetComponent<NetworkObject>();
+        if (netObj == null)
+        {
+            Debug.LogWarning("[RaceManager] Player has no NetworkObject; cannot request finish.");
+            return;
+        }
+        Debug.Log($"[RaceManager] 클라이언트에서 Finish 호출, 서버로 요청: {p.name}");
+        FinishServerRpc(netObj);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void FinishServerRpc(NetworkObjectReference playerRef)
+    {
+        Debug.Log("[RaceManager] 서버에서 FinishServerRpc 수신.");
+        if (!playerRef.TryGet(out var netObj)) return;
+        var progress = netObj.GetComponent<PlayerRaceProgress>();
+        if (progress == null) return;
+        FinishInternal(progress);
+    }
+
+    private void FinishInternal(PlayerRaceProgress p)
+    {
         if (gameFlow.State != MatchState.Playing) return;
         if (p.finished) return;
-
         p.finished = true;
-        p.finishTime = Time.time - gameFlow.MatchStartTime;
+        p.finishTime = (float)(NetworkManager.Singleton.ServerTime.Time - gameFlow.MatchStartTime);
+        Debug.Log($"[RaceManager] 완주 기록 저장: {p.name}, 시간={p.finishTime:F3}");
 
         StartCoroutine(ReachedGoalLine());
-
 
         if (!endScheduled)
         {
