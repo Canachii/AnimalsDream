@@ -1739,6 +1739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
+  playerIcon: {fileID: 2139947740, guid: ae84cb74362a4094b8a0409fd5905ef0, type: 3}
 --- !u!114 &6380978039556100407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1789,6 +1790,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSkillController
   skills:
   - {fileID: 7978594668228145056}
+  - {fileID: 4631862715464077833}
 --- !u!114 &7978594668228145056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1802,7 +1804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZebraActiveSkill
   skillName: 
-  icon: {fileID: 0}
+  icon: {fileID: 806782572, guid: ae84cb74362a4094b8a0409fd5905ef0, type: 3}
   cooldown: 1
   description: 
   duration: 4
@@ -1821,7 +1823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZebraPsssiveSkill
   skillName: 
-  icon: {fileID: 0}
+  icon: {fileID: -435828856, guid: ae84cb74362a4094b8a0409fd5905ef0, type: 3}
   cooldown: 1
   description: 
   shileldRenderer: {fileID: 1518157583199451122}

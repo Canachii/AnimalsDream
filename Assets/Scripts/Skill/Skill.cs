@@ -14,7 +14,23 @@ public abstract class Skill : MonoBehaviour
     {
         return Time.time >= lastUseTime + cooldown;
     }
+    public float RemainingCooldown
+    {
+        get
+        {
+            float remaining = (lastUseTime + cooldown) - Time.time;
+            return Mathf.Max(0f, remaining);
+        }
+    }
 
+    public float CooldownRatio
+    {
+        get
+        {
+            if (cooldown <= 0f) return 0f;
+            return Mathf.Clamp01(RemainingCooldown / cooldown);
+        }
+    }
     public bool TryUse(PlayerController user)
     {
         if (!CanUse())
