@@ -144,4 +144,5 @@ public class RaceManager : NetworkBehaviour
         players.Remove(p);
     }
 
+    public int PlayerCount => players.Count;
 }

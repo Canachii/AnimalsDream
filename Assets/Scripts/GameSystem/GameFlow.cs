@@ -15,6 +15,7 @@ public class GameFlow : NetworkBehaviour
 {
     [Header("Settings")]
     [SerializeField] private float countdownSeconds = 3f;
+    [SerializeField] private float matchTimeLimit = 300f;
 
     // 서버만 쓸 수 있고, 모두가 읽을 수 있는 값들
     private readonly NetworkVariable<MatchState> netState =
@@ -35,6 +36,22 @@ public class GameFlow : NetworkBehaviour
     public event Action OnMatchStarted;
     public event Action OnMatchFinished;
     public event Action OnReachedGoalLine;
+
+    public float RemainingTime
+    {
+        get
+        {
+            if (State != MatchState.Playing) return matchTimeLimit;
+
+            // 아직 네트워크가 준비 안 된 경우 대비
+            if (NetworkManager == null) return matchTimeLimit;
+
+            double now = NetworkManager.ServerTime.Time;   // 클라에서도 동기화된 서버 시간
+            double elapsed = now - MatchStartTime;
+
+            return Mathf.Max(0f, matchTimeLimit - (float)elapsed);
+        }
+    }
 
     public override void OnNetworkSpawn()
     {
