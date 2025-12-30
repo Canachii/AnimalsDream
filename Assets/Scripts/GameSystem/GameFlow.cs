@@ -15,6 +15,7 @@ public class GameFlow : NetworkBehaviour
 {
     [Header("Settings")]
     [SerializeField] private float countdownSeconds = 3f;
+    [SerializeField] private float matchTimeLimit = 300f;
 
     // 서버만 쓸 수 있고, 모두가 읽을 수 있는 값들
     private readonly NetworkVariable<MatchState> netState =
@@ -35,6 +36,25 @@ public class GameFlow : NetworkBehaviour
     public event Action OnMatchStarted;
     public event Action OnMatchFinished;
     public event Action OnReachedGoalLine;
+    public event Action<int> OnCountdownChanged; // 3,2,1,0 매번 UI 갱신용
+    public int CountdownSec => netCountdownSec.Value;
+
+
+    public float RemainingTime
+    {
+        get
+        {
+            if (State != MatchState.Playing) return matchTimeLimit;
+
+            // 아직 네트워크가 준비 안 된 경우 대비
+            if (NetworkManager == null) return matchTimeLimit;
+
+            double now = NetworkManager.ServerTime.Time;   // 클라에서도 동기화된 서버 시간
+            double elapsed = now - MatchStartTime;
+
+            return Mathf.Max(0f, matchTimeLimit - (float)elapsed);
+        }
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -50,6 +70,7 @@ public class GameFlow : NetworkBehaviour
 
         // 늦게 들어온 클라도 현재 상태 1번 반영
         OnStateChanged?.Invoke(netState.Value);
+        OnCountdownChanged?.Invoke(netCountdownSec.Value);
     }
 
     public override void OnNetworkDespawn()
@@ -121,6 +142,7 @@ public class GameFlow : NetworkBehaviour
 
     private void HandleCountdownChanged(int prev, int next)
     {
+        OnCountdownChanged?.Invoke(next);
         // next: 3,2,1,0 으로 떨어짐
         if (prev <= 0 && next > 0)
             OnCountdownTick?.Invoke(next);

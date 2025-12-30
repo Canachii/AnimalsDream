@@ -2243,6 +2243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
+  playerIcon: {fileID: -1021079349, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
 --- !u!114 &4963713010145688243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2293,6 +2294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSkillController
   skills:
   - {fileID: 1938841069041011093}
+  - {fileID: 8874561420991230471}
 --- !u!114 &8874561420991230471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2306,7 +2308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorsePassiveSkill
   skillName: 
-  icon: {fileID: 0}
+  icon: {fileID: 2012679181, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 1
   description: 
   stackInterval: 2
@@ -2331,7 +2333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorseActiveSkill
   skillName: 
-  icon: {fileID: 0}
+  icon: {fileID: -840151881, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 1
   description: 
   speedMultiplier: 1.4

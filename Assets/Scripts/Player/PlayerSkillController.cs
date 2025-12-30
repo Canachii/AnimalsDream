@@ -25,6 +25,13 @@ public class PlayerSkillController : MonoBehaviour
         skill.TryUse(owner);
     }
 
-
+    public Skill GetSkill(int index)
+    {
+        if (skills != null && index >= 0 && index < skills.Length)
+        {
+            return skills[index];
+        }
+        return null;
+    }
 
 }

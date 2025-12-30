@@ -8563,7 +8563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2326579502
+  GlobalObjectIdHash: 3892072857
   InScenePlacedSourceGlobalObjectIdHash: 2513433365
   DeferredDespawnTick: 0
   Ownership: 1
@@ -8657,6 +8657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
+  playerIcon: {fileID: -1818998479, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
 --- !u!114 &2319874078339301046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8721,7 +8722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NMBeetleActiveSkill
   skillName: NMBite
-  icon: {fileID: 0}
+  icon: {fileID: -212665834, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 1
   description: 
   stunDuration: 2
@@ -8747,7 +8748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BeetlePassiveSkill
   skillName: NMPassive
-  icon: {fileID: 0}
+  icon: {fileID: 1266175817, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 1
   description: 
   speedBuffDuration: 1.5
@@ -8783,6 +8784,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaterialHandler
   translucentMaterial: {fileID: 2100000, guid: 373c5a9c0a2897e47aa28da0dda06b83, type: 2}
+  excludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &6319442535679688392
 PrefabInstance:
   m_ObjectHideFlags: 0

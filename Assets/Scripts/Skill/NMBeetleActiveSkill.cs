@@ -32,6 +32,7 @@ public class BeetleActiveSkill : Skill
 
     private void PerformBite(PlayerController user)
     {
+        AudioManager.Instance?.PlayAtPoint(SoundId.Event_SpiderSkill, transform.position);
         Vector3 center = transform.position
                          + (transform.forward * biteForwardOffset)
                          + (Vector3.up * biteHeightOffset);

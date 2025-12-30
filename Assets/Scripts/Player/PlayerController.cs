@@ -7,10 +7,11 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerController : NetworkBehaviour
 {
+    // TODO: 인스펙터에서 각 캐릭터 프리팹(Horse, Penguin, Spider)에 맞는 아이콘을 할당해야 합니다.
+    public Sprite playerIcon;
     private PlayerMovement movement;
     private PlayerSkillController skillController;
     private PlayerInputHandler input;
-
     private bool isCrowdControlled = false;
 
     private void Awake()

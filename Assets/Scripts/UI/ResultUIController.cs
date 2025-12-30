@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class ResultUIController : MonoBehaviour
@@ -99,7 +101,11 @@ public class ResultUIController : MonoBehaviour
     private void OnLobbyButtonClicked()
     {
         Debug.Log("Return to Lobby requested.");
-        // Implement scene transition logic here
-        // e.g., SceneManager.LoadScene("LobbyScene");
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+        AudioManager.Instance?.StopAllNonBgm();
+        SceneManager.LoadScene("LobbyScene", LoadSceneMode.Single);
     }
 }

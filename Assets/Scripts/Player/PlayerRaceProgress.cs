@@ -9,6 +9,7 @@ public class PlayerRaceProgress : MonoBehaviour
     public bool finished;
 
     public int Rank { get; private set; }
+    public int DeathCount { get; private set; }
 
     private void Awake()
     {
@@ -16,7 +17,8 @@ public class PlayerRaceProgress : MonoBehaviour
         { 
             raceManager = FindFirstObjectByType<RaceManager>();
             Debug.Assert(raceManager, "[PlayerRaceProgress] RaceManager reference missing.");
-        } 
+        }
+        DeathCount = 0;
     }
 
 
@@ -38,6 +40,7 @@ public class PlayerRaceProgress : MonoBehaviour
     }
 
     public void SetRank(int rank) => Rank = rank;
+    public void SetDeathCount(int deathCount) => DeathCount += deathCount;
 
 
     private void Update()

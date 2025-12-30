@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -52,7 +54,25 @@ public class GameManager : MonoBehaviour
             spawnManager.InitializeSpawnManager();
             spawnManager.SpawnAllConnectedPlayers();
 
+            SetupHUD();
+
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= HandleSceneLoadComplete;
+        }
+    }
+
+    private void SetupHUD()
+    {
+        var docs = FindObjectsByType<UIDocument>(FindObjectsSortMode.None);
+        foreach (var doc in docs)
+        {
+            if (doc.visualTreeAsset != null && doc.visualTreeAsset.name.Contains("GameHUDView"))
+            {
+                if (doc.GetComponent<GameHUDController>() == null)
+                {
+                    doc.gameObject.AddComponent<GameHUDController>();
+                }
+                break;
+            }
         }
     }
 }
