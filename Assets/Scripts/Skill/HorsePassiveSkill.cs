@@ -7,6 +7,11 @@ public class HorsePassiveSkill : Skill
     public float bonusPerStack = 0.05f;
     public int maxStacks = 3;
 
+    [Header("Particle Settings")]
+    public ParticleSystem stackAuraParticle;
+    public float baseEmissionRate = 5f;
+    public float maxEmissionMultiplier = 1.5f;
+
     [Header("Debug Info")]
     [SerializeField] private int currentStack = 0;
     [SerializeField] private float currentSpeed = 0f;
@@ -14,9 +19,11 @@ public class HorsePassiveSkill : Skill
 
     private PlayerMovement movement;
     private HorseActiveSkill activeSkill;
-
     private Vector3 lastPosition;
     private float smoothedSpeed = 0f;
+    private ParticleSystem.EmissionModule emissionModule;
+    private ParticleSystem.MainModule mainModule;
+    private float originalEmissionRate;
 
     protected override void OnUse(PlayerController user) { }
 
@@ -31,6 +38,19 @@ public class HorsePassiveSkill : Skill
     void Start()
     {
         lastPosition = transform.position;
+        InitParticle();
+    }
+
+    void InitParticle()
+    {
+        if (stackAuraParticle == null) return;
+
+        emissionModule = stackAuraParticle.emission;
+        mainModule = stackAuraParticle.main;
+        originalEmissionRate = emissionModule.rateOverTime.constant;
+
+        stackAuraParticle.Stop();
+        stackAuraParticle.Clear();
     }
 
     void Update()
@@ -41,9 +61,10 @@ public class HorsePassiveSkill : Skill
             {
                 currentStack = 0;
                 moveTimer = 0f;
+                movement.SetMoveSpeedMultiplier(1.0f);
+                UpdateParticleByStack();
                 Debug.Log("[Passive] active On -> stack 0");
             }
-
             lastPosition = transform.position;
             smoothedSpeed = 0f;
             return;
@@ -79,6 +100,8 @@ public class HorsePassiveSkill : Skill
                 ResetStack();
             }
         }
+
+        UpdateParticleByStack();
     }
 
     void AddStack()
@@ -94,9 +117,7 @@ public class HorsePassiveSkill : Skill
     {
         currentStack = 0;
         moveTimer = 0f;
-
         movement.SetMoveSpeedMultiplier(1.0f);
-
         Debug.Log("Passive Reset");
     }
 
@@ -104,5 +125,27 @@ public class HorsePassiveSkill : Skill
     {
         float targetMultiplier = 1.0f + (currentStack * bonusPerStack);
         movement.SetMoveSpeedMultiplier(targetMultiplier);
+    }
+
+    void UpdateParticleByStack()
+    {
+        if (stackAuraParticle == null) return;
+
+        if (currentStack <= 0)
+        {
+            stackAuraParticle.Stop();
+            return;
+        }
+
+        if (!stackAuraParticle.isPlaying)
+        {
+            stackAuraParticle.Clear();
+            stackAuraParticle.Play(true);
+        }
+
+        float t = Mathf.InverseLerp(1, maxStacks, currentStack);
+        float intensity = Mathf.Lerp(0.5f, maxEmissionMultiplier, t);
+        emissionModule.rateOverTime = originalEmissionRate * intensity;
+        mainModule.startSizeMultiplier = Mathf.Lerp(0.8f, 1.2f, t);
     }
 }
