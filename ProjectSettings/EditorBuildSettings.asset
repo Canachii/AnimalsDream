@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/LoobyScene.unity
+    path: Assets/Scenes/LobbyScene.unity
     guid: 261c15f2359ee304f99599e73b0ce1e0
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/beetleTest.unity
     guid: dcf33e8b94a32ad40934b5ccc56a24f7
   m_configObjects:

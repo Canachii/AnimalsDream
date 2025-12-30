@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -463,5 +464,30 @@ public class AudioManager : MonoBehaviour
             Destroy(src.gameObject);
         }
         _loopSources.Remove(handle);
+    }
+    public void StopAllNonBgm()
+    {
+        // 2D SFX / UI 끄기 (PlayOneShot 포함)
+        StopPool(sfx2DPool);
+        StopPool(ui2DPool);
+
+        // 3D SFX 풀 끄기
+        for (int i = 0; i < sfx3DPool.Count; i++)
+        {
+            if (sfx3DPool[i] != null) sfx3DPool[i].Stop();
+        }
+
+        // Loop3D 핸들로 재생 중인 것들 끄기
+        var handles = _loopSources.Keys.ToArray();
+        foreach (var h in handles)
+            StopLoop(h);
+    }
+
+    private void StopPool(List<AudioSource> pool)
+    {
+        for (int i = 0; i < pool.Count; i++)
+        {
+            if (pool[i] != null) pool[i].Stop();
+        }
     }
 }
