@@ -22,6 +22,7 @@ public class KillZone: MonoBehaviour
          
         var progress =  other.GetComponent<PlayerRaceProgress>();
         if (progress == null) return;
+        progress.SetDeathCount(1);
         respawnSystem.DeathAndRespawn(progress);
     }
 }

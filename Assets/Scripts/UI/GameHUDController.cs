@@ -2,10 +2,13 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.Netcode;
 using AnimalsDream.UI;
+using System.Collections.Generic;
 
 public class GameHUDController : MonoBehaviour
 {
-    // TODO: 게임 종료(FinishMatch) 시 결과를 보여주는 UI 오버레이와의 연결
+    [SerializeField] private ResultUIController resultUI; // 인스펙터로 연결 추천
+    private bool switchedToResult;
+
     private UIDocument uiDocument;
     private PlayerSkillController localPlayerSkills;
     private PlayerRaceProgress localPlayerProgress;
@@ -30,8 +33,73 @@ public class GameHUDController : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         gameFlow = FindAnyObjectByType<GameFlow>();
         raceManager = FindAnyObjectByType<RaceManager>();
+
+        // ResultUI는 "비활성 오브젝트"일 수 있으니 인스펙터 연결이 가장 안전
+        // (FindAnyObjectByType는 비활성 오브젝트를 못 찾는 버전/환경이 많음)
+        if (resultUI != null)
+            resultUI.gameObject.SetActive(false);
+
+        switchedToResult = false;
+
+        if (gameFlow != null)
+        {
+            gameFlow.OnMatchFinished += SwitchToResultUI;
+
+            // 혹시 이미 Finished 상태로 들어온 경우(늦게 진입/리플레이 등) 즉시 반영
+            if (gameFlow.State == MatchState.Finished)
+                SwitchToResultUI();
+        }
+    }
+    private void OnDisable()
+    {
+        if (gameFlow != null)
+            gameFlow.OnMatchFinished -= SwitchToResultUI;
     }
 
+    private void SwitchToResultUI()
+    {
+        if (switchedToResult) return;
+        switchedToResult = true;
+
+        if (resultUI != null)
+        {
+            var data = BuildRankingData();
+
+            resultUI.SetRankingData(data);
+
+            resultUI.gameObject.SetActive(true);
+        }
+
+        // HUD 끄기
+        gameObject.SetActive(false);
+    }
+
+    private List<ResultUIController.RankingData> BuildRankingData()
+    {
+        var list = new List<ResultUIController.RankingData>();
+
+        // 가장 안전: 씬에 있는 PlayerRaceProgress를 수집해서 결과용 스냅샷 만들기
+        var progresses = FindObjectsByType<PlayerRaceProgress>(FindObjectsSortMode.None);
+
+        foreach (var p in progresses)
+        {
+            // playerName은 너 프로젝트에 맞는 이름 필드로 교체해줘
+            string name = p.name;
+            var netObj = p.GetComponent<NetworkObject>();
+            if (netObj != null) name = $"Player {netObj.OwnerClientId}";
+
+            list.Add(new ResultUIController.RankingData
+            {
+                rank = p.Rank,
+                playerName = name,
+                finishTime = p.finishTime,   
+                deathCount = p.DeathCount    
+            });
+        }
+
+        list.Sort((a, b) => a.rank.CompareTo(b.rank));
+        return list;
+    }
     private void Update()
     {
         if (uiDocument == null)

@@ -504,7 +504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a509b6117c2144bab46680ab09f86a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnManager
-  playerPrefab: {fileID: 8454982150863327786, guid: f5363b3a45e9bbf449ae9f1d5ccc22ed, type: 3}
+  playerPrefab: {fileID: 0}
   characterPrefabs:
   - {fileID: 6667839711547219737, guid: 8edbf3ea0c507e04eaf4248ee17a09df, type: 3}
   - {fileID: 8454982150863327786, guid: f5363b3a45e9bbf449ae9f1d5ccc22ed, type: 3}
