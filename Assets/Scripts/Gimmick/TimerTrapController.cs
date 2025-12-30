@@ -22,10 +22,10 @@ public abstract class TimerTrapController : TrapController
     {
         while (true)
         {
-            yield return new WaitForSeconds(trapActiveTime);
+            yield return new WaitForSeconds(trapDuration);
             ActivateTrap();
 
-            yield return new WaitForSeconds(trapDuration);
+            yield return new WaitForSeconds(trapActiveTime);
             DeactivateTrap();
         }
     }

@@ -48,11 +48,13 @@ public class FireTrap : TimerTrapController
     {
         _particleSystem.Stop();
         _audioSource.Stop();
+        gameObject.SetActive(false);
     }
 
     private void Play()
     {
         _particleSystem.Play();
         _audioSource.Play();
+        gameObject.SetActive(true);
     }
 }

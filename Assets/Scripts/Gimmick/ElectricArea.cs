@@ -81,7 +81,7 @@ public class ElectricArea : MonoBehaviour
         float x = Random.Range(b.min.x, b.max.x);
         float z = Random.Range(b.min.z, b.max.z);
 
-        return new Vector3(x, 15f, z);
+        return new Vector3(x, 11f, z);
     }
 
 }
