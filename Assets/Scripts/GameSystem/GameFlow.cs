@@ -122,7 +122,7 @@ public class GameFlow : NetworkBehaviour
     private void HandleCountdownChanged(int prev, int next)
     {
         // next: 3,2,1,0 À¸·Î ¶³¾îÁü
-        if (next > 0)
+        if (prev <= 0 && next > 0)
             OnCountdownTick?.Invoke(next);
     }
 

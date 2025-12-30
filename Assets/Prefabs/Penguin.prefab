@@ -1479,7 +1479,7 @@ MonoBehaviour:
   description: 
   slowRatio: 0.5
   duration: 4
-  slowEffectPrefab: {fileID: 0}
+  slowEffectPrefab: {fileID: 1920325297268671343, guid: 5e9f6d6cecb45c04fab32e606e841f22, type: 3}
   effectScale: 2
 --- !u!114 &4617185948800477200
 MonoBehaviour:
@@ -1511,6 +1511,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MaterialHandler
   translucentMaterial: {fileID: 2100000, guid: a0b32d4db9327194997f88eccecb22d9, type: 2}
+  excludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &8156699869588700837
 GameObject:
   m_ObjectHideFlags: 0

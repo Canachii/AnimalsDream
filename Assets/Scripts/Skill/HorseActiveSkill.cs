@@ -32,12 +32,13 @@ public class HorseActiveSkill : Skill
             Debug.Log($"[{skillName}] !isGrounded");
             return;
         }
-
         StartCoroutine(RushRoutine(movement));
     }
 
     private IEnumerator RushRoutine(PlayerMovement movement)
     {
+        AudioManager.Instance?.PlayAtPoint(SoundId.Event_HorseSkill, transform.position);
+        
         isRushing = true;
 
         Debug.Log($"[{skillName}] rush start ( speed : {speedMultiplier}, duration : {duration}s)");

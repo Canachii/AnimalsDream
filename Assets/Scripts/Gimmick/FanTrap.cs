@@ -14,14 +14,23 @@ public class FanTrap : TimerTrapController
     [SerializeField] private float _maxFanSpeed = 1500f;
     private bool _isFanOn = false;
 
+    private int _fanLoopHandle = -1;
+
     protected override void OnActivate()
     {
         _isFanOn = true;
+        if (_fanLoopHandle < 0)
+            _fanLoopHandle = AudioManager.Instance?.StartLoop3D(SoundId.Trap_Fan, transform) ?? -1;
     }
 
     protected override void OnDeactivate()
     {
         _isFanOn = false;
+        if (_fanLoopHandle >= 0)
+        {
+            AudioManager.Instance?.StopLoop(_fanLoopHandle);
+            _fanLoopHandle = -1;
+        }
     }
 
     protected override void Start()
@@ -76,6 +85,12 @@ public class FanTrap : TimerTrapController
         if (_fanRotateSpeed < _minFanSpeed)
         {
             _fanRotateSpeed = _minFanSpeed;
+        }
+
+        if (_fanLoopHandle >= 0)
+        {
+            AudioManager.Instance?.StopLoop(_fanLoopHandle);
+            _fanLoopHandle = -1;
         }
     }
 }
