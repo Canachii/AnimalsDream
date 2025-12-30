@@ -1413,6 +1413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
+  playerIcon: {fileID: -389849676, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
 --- !u!114 &7623016409226855487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1463,6 +1464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSkillController
   skills:
   - {fileID: 3653743199480069864}
+  - {fileID: 6449943399526784574}
 --- !u!114 &3653743199480069864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1476,7 +1478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PenguinSkill
   skillName: 
-  icon: {fileID: 0}
+  icon: {fileID: 937593897, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 9
   description: 
   slowRatio: 0.5
@@ -1516,7 +1518,6 @@ MonoBehaviour:
   excludeLayers:
     serializedVersion: 2
     m_Bits: 0
-
 --- !u!114 &6449943399526784574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1530,7 +1531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PenguinPassiveFlockSkill
   skillName: 
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 52639c62da2a3b84b927cf6afaafbdb3, type: 3}
   cooldown: 0
   description: 
   detectionRadius: 6
