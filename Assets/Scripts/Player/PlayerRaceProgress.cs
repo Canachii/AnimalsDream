@@ -1,25 +1,94 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerRaceProgress : NetworkBehaviour
+public class PlayerRaceProgress : NetworkBehaviour // [CHANGED] MonoBehaviour -> NetworkBehaviour
 {
-    [Header("Checkpoint")]
-    public Transform lastCheckpointTransform;
+    [SerializeField] private RaceManager raceManager;
 
-    //서버 권위 데스카운트
-    private readonly NetworkVariable<int> deathCount =
+    // 체크포인트 Transform은 "서버 리스폰"에서만 쓰면 되므로 로컬 참조로 유지
+    public Transform lastCheckpointTransform; // 기존 유지
+
+    // ---- Networked state (서버만 Write) ----
+    private readonly NetworkVariable<int> netLastCheckpointIndex =
+        new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    private readonly NetworkVariable<float> netFinishTime =
+        new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    private readonly NetworkVariable<bool> netFinished =
+        new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    private readonly NetworkVariable<int> netRank =
         new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    //리스폰 중 플래그(중복 트리거/중복 카운트 방지)
+    private readonly NetworkVariable<int> netDeathCount =
+        new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
     public readonly NetworkVariable<bool> IsRespawning =
         new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    public int DeathCount => deathCount.Value;
+    public int lastCheckpointIndex => netLastCheckpointIndex.Value;
+    public float finishTime
+    {
+        get => netFinishTime.Value;
+        set { if (IsServer) netFinishTime.Value = value; } // [CHANGED]
+    }
+    public bool finished
+    {
+        get => netFinished.Value;
+        set { if (IsServer) netFinished.Value = value; }   // [CHANGED]
+    }
 
-    
-    public void AddDeath_Server(int delta)
+    public int Rank => netRank.Value; 
+    public int DeathCount => netDeathCount.Value;
+
+    private void Awake()
+    {
+        if (!raceManager)
+        {
+            raceManager = FindFirstObjectByType<RaceManager>();
+            Debug.Assert(raceManager, "[PlayerRaceProgress] RaceManager reference missing.");
+        }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        raceManager?.RegisterPlayer(this);
+
+        if (IsServer)
+        {
+            netDeathCount.Value = 0;
+            netRank.Value = 0;
+            netFinishTime.Value = 0f;
+            netFinished.Value = false;
+            netLastCheckpointIndex.Value = -1;
+            IsRespawning.Value = false;
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        raceManager?.UnregisterPlayer(this);
+    }
+
+
+    public void UpdateCheckpoint(int index, Transform t)
     {
         if (!IsServer) return;
-        deathCount.Value += delta;
+        netLastCheckpointIndex.Value = index;
+        lastCheckpointTransform = t;
+    }
+
+    public void SetRank(int rank)
+    {
+        if (!IsServer) return;
+        netRank.Value = rank;              
+    }
+
+    // KillZone에서 쓰기 좋게 별칭도 제공
+    public void AddDeath_Server(int delta = 1) 
+    {
+        if (!IsServer) return;
+        netDeathCount.Value += delta;
     }
 }
