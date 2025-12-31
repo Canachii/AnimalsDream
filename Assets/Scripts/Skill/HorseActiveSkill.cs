@@ -1,32 +1,22 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Netcode;
 
 public class HorseActiveSkill : Skill
 {
     [Header("Horse Rush Settings")]
     public float speedMultiplier = 1.4f;
-
     [Tooltip("Skill duration")]
     public float duration = 2.0f;
-
     public float knockbackForce = 10.0f;
-
     public LayerMask targetLayer;
 
     private bool isRushing = false;
     public bool IsRushing => isRushing;
 
-    private void Reset()
-    {
-        cooldown = 10f;
-        skillName = "skillName";
-        description = "description";
-    }
-
     protected override void OnUse(PlayerController user)
     {
         PlayerMovement movement = user.GetComponent<PlayerMovement>();
-
         if (!movement.IsGrounded)
         {
             Debug.Log($"[{skillName}] !isGrounded");
@@ -38,10 +28,10 @@ public class HorseActiveSkill : Skill
     private IEnumerator RushRoutine(PlayerMovement movement)
     {
         AudioManager.Instance?.PlayAtPoint(SoundId.Event_HorseSkill, transform.position);
-        
+
         isRushing = true;
 
-        Debug.Log($"[{skillName}] rush start ( speed : {speedMultiplier}, duration : {duration}s)");
+        Debug.Log($"[{skillName}] rush start");
 
         movement.SetMoveSpeedMultiplier(speedMultiplier);
         movement.SetForcedForward(true);
@@ -53,7 +43,6 @@ public class HorseActiveSkill : Skill
             movement.SetMoveSpeedMultiplier(1.0f);
             movement.SetForcedForward(false);
         }
-
         isRushing = false;
 
         Debug.Log($"[{skillName}] Skill Done");
@@ -61,32 +50,53 @@ public class HorseActiveSkill : Skill
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!isRushing) return;
+        if (!IsOwner || !isRushing) return;
 
         if (((1 << collision.gameObject.layer) & targetLayer) != 0)
         {
             if (collision.gameObject == gameObject) return;
-            
+
             var zebraShield = collision.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
+
             if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
                 return;
 
-            Rigidbody targetRb = collision.gameObject.GetComponent<Rigidbody>();
-            if (targetRb != null)
+            NetworkObject targetNetObj = collision.gameObject.GetComponentInParent<NetworkObject>();
+
+            if (targetNetObj != null)
             {
                 Debug.Log($"[{skillName}] : {collision.gameObject.name} -> knockback!");
 
-                ApplyKnockback(targetRb, collision);
+                ApplyKnockbackServerRpc(targetNetObj.NetworkObjectId, collision.transform.position);
             }
         }
     }
 
-    private void ApplyKnockback(Rigidbody targetRb, Collision collision)
+    [Rpc(SendTo.Server)]
+    private void ApplyKnockbackServerRpc(ulong targetObjId, Vector3 hitPos)
     {
-        Vector3 knockbackDir = collision.transform.position - transform.position;
-        knockbackDir.y = 0.2f;
-        knockbackDir.Normalize();
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetObjId, out NetworkObject targetObj))
+        {
+            Vector3 knockbackDir = targetObj.transform.position - transform.position;
 
-        targetRb.AddForce(knockbackDir * knockbackForce, ForceMode.Impulse);
+            knockbackDir.y = 0.2f;
+            knockbackDir.Normalize();
+
+            ApplyKnockbackClientRpc(targetObjId, knockbackDir);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ApplyKnockbackClientRpc(ulong targetObjId, Vector3 dir)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetObjId, out NetworkObject targetObj))
+        {
+            Rigidbody targetRb = targetObj.GetComponent<Rigidbody>();
+
+            if (targetRb != null)
+            {
+                targetRb.AddForce(dir * knockbackForce, ForceMode.Impulse);
+            }
+        }
     }
 }
