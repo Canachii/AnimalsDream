@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2595050987285993440}
   - component: {fileID: 77623130755400787}
+  - component: {fileID: 2055530646751804837}
   - component: {fileID: 4644268043088430228}
   - component: {fileID: 6511779159758884513}
   m_Layer: 0
@@ -57,6 +58,31 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.987525, y: 1.450383, z: 4.0001554}
   m_Center: {x: 0.0020284653, y: 0.6629696, z: -0.014701366}
+--- !u!114 &2055530646751804837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762842435005080457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3198412777
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &4644268043088430228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,6 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a07820eb4e7c0c4c811a29a0d7a0492, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpingTrap
+  ShowTopMostFoldoutHeaderGroup: 1
   upForce: 10
   forwardForce: 7
   delay: 0.1
