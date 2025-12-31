@@ -10,6 +10,7 @@ public class PenguinSkill : Skill
     public float slowRatio = 0.5f;
 
     [Tooltip("Duration (seconds)")]
+    [Min(0f)]
     public float duration = 4f;
 
     public GameObject slowEffectPrefab;
@@ -17,75 +18,91 @@ public class PenguinSkill : Skill
 
     private void OnValidate()
     {
-        if (cooldown <= duration) cooldown = duration + 5.0f;
+        if (cooldown <= duration)
+        {
+            cooldown = duration + 5.0f;
+        }
     }
 
     protected override void OnUse(PlayerController user)
     {
+        if (!user.IsOwner) return;
+
         Debug.Log($"Skill Activated: {skillName}");
 
+        RequestSkillServerRpc(user.GetComponent<NetworkObject>().NetworkObjectId);
+    }
+
+    [ServerRpc]
+    private void RequestSkillServerRpc(ulong userId)
+    {
         PlayerMovement[] allMovements = FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None);
 
         foreach (PlayerMovement target in allMovements)
         {
-            if (target != user.GetComponent<PlayerMovement>())
+            var targetNetObj = target.GetComponent<NetworkObject>();
+            if (targetNetObj == null) continue;
+
+            if (targetNetObj.NetworkObjectId == userId) continue;
+
+            var zebraShield = target.GetComponentInParent<ZebraPsssiveSkill>();
+            if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
+                continue;
+
+            ApplySkillClientRpc(targetNetObj.NetworkObjectId);
+        }
+    }
+
+    [ClientRpc]
+    private void ApplySkillClientRpc(ulong targetId)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetNetObj))
+        {
+            PlayerMovement target = targetNetObj.GetComponent<PlayerMovement>();
+            if (target != null)
             {
-                var zebraShield = target.GetComponentInParent<ZebraPsssiveSkill>();
-
-                if (zebraShield != null && zebraShield.TryBlock(this, user.gameObject))
-                    continue;
-
-                StartCoroutine(ApplySlowLogic(target));
-
-                SpawnSlowEffectServerRpc(target.transform.position);
+                StartCoroutine(ApplySlowSafely(target));
             }
         }
     }
 
-    private IEnumerator ApplySlowLogic(PlayerMovement target)
+    private IEnumerator ApplySlowSafely(PlayerMovement target)
     {
-        target.SetMoveSpeedMultiplier(slowRatio);
+        if (target.GetComponent<NetworkObject>().IsOwner)
+        {
+            target.SetMoveSpeedMultiplier(slowRatio);
+        }
+
+        GameObject activeEffect = null;
+        if (slowEffectPrefab != null)
+        {
+            activeEffect = Instantiate(slowEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
+
+            activeEffect.transform.localPosition = Vector3.zero;
+            activeEffect.transform.localScale = Vector3.one * effectScale;
+
+            AudioManager.Instance?.PlayAtPoint(SoundId.Event_PenguinSkill, activeEffect.transform.position);
+        }
 
         yield return new WaitForSeconds(duration);
 
-        if (target != null) target.SetMoveSpeedMultiplier(1.0f);
-    }
-
-    [Rpc(SendTo.Server)]
-    private void SpawnSlowEffectServerRpc(Vector3 position)
-    {
-        SpawnSlowEffectClientRpc(position);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void SpawnSlowEffectClientRpc(Vector3 position)
-    {
-        if (slowEffectPrefab != null)
+        if (target != null && target.GetComponent<NetworkObject>().IsOwner)
         {
-            GameObject activeEffect = Instantiate(slowEffectPrefab, position, Quaternion.identity);
-
-            activeEffect.transform.localScale = Vector3.one * effectScale;
-
-            AudioManager.Instance?.PlayAtPoint(SoundId.Event_PenguinSkill, position);
-
-            StartCoroutine(DestroyEffectRoutine(activeEffect, duration));
+            target.SetMoveSpeedMultiplier(1.0f);
         }
-    }
-
-    private IEnumerator DestroyEffectRoutine(GameObject activeEffect, float delay)
-    {
-        yield return new WaitForSeconds(delay);
 
         if (activeEffect != null)
         {
             ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();
-
             if (ps != null)
             {
                 ps.Stop();
                 Destroy(activeEffect, 2.0f);
             }
-            else Destroy(activeEffect);
+            else
+            {
+                Destroy(activeEffect);
+            }
         }
     }
 }

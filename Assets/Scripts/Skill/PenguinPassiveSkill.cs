@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Unity.Netcode;
 
 public class PenguinPassiveSkill : Skill
 {
@@ -11,7 +12,10 @@ public class PenguinPassiveSkill : Skill
     public float baseEmissionRate = 10f;
     public float maxEmissionMultiplier = 3f;
 
-    private int nearbyPlayerCount = 0;
+    private readonly NetworkVariable<int> nearbyPlayerCount = new NetworkVariable<int>(
+        0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server
+    );
+
     private float currentSpeedBoost = 0f;
     private float originalEmissionRate;
     private ParticleSystem.EmissionModule emissionModule;
@@ -42,31 +46,43 @@ public class PenguinPassiveSkill : Skill
 
     void Update()
     {
-        UpdateNearbyPlayers();
-        ApplySpeedUp();
+        if (IsServer)
+        {
+            UpdateNearbyPlayers();
+        }
+
+        if (IsOwner)
+        {
+            ApplySpeedUp();
+        }
+
         UpdateParticleIntensity();
     }
 
     void UpdateNearbyPlayers()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRadius, -5);
-        nearbyPlayerCount = 0;
+        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRadius);
+        int count = 0;
 
         foreach (var col in colliders)
         {
             if (col.CompareTag("Player") && col.gameObject != gameObject)
             {
-                nearbyPlayerCount++;
+                count++;
             }
         }
+
+        nearbyPlayerCount.Value = count;
     }
 
     void ApplySpeedUp()
     {
         float targetBoost = 0f;
-        if (nearbyPlayerCount < bonusPerPlayer.Length)
+        int count = nearbyPlayerCount.Value;
+
+        if (count < bonusPerPlayer.Length)
         {
-            targetBoost = bonusPerPlayer[nearbyPlayerCount];
+            targetBoost = bonusPerPlayer[count];
         }
         else
         {
@@ -87,17 +103,25 @@ public class PenguinPassiveSkill : Skill
     {
         if (speedUpParticle == null) return;
 
-        if (currentSpeedBoost > 0f)
+        int count = nearbyPlayerCount.Value;
+        float boostAmount = 0f;
+
+        if (count < bonusPerPlayer.Length) boostAmount = bonusPerPlayer[count];
+
+        else boostAmount = bonusPerPlayer[bonusPerPlayer.Length - 1];
+
+        if (boostAmount > 0f)
         {
             if (!speedUpParticle.isPlaying)
                 speedUpParticle.Play();
 
-            float intensityMultiplier = Mathf.Lerp(0.3f, maxEmissionMultiplier, currentSpeedBoost / 0.2f);
+            float intensityMultiplier = Mathf.Lerp(0.3f, maxEmissionMultiplier, boostAmount / 0.2f);
 
             emissionModule.rateOverTime = baseEmissionRate * intensityMultiplier;
 
             var main = speedUpParticle.main;
-            main.startSizeMultiplier = Mathf.Lerp(0.7f, 1.5f, currentSpeedBoost / 0.2f);
+
+            main.startSizeMultiplier = Mathf.Lerp(0.7f, 1.5f, boostAmount / 0.2f);
         }
         else
         {
