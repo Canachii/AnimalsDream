@@ -1,7 +1,8 @@
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class TrapController : MonoBehaviour
+public abstract class TrapController : NetworkBehaviour
 {
     protected Collider trapCollider;
     protected Renderer trapRenderer;

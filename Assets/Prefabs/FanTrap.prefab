@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6894042464274784128}
   - component: {fileID: 1914482107187903559}
+  - component: {fileID: 4673000107793945403}
   - component: {fileID: 8946734809795448178}
   m_Layer: 0
   m_Name: FanTrap
@@ -56,6 +57,31 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.214588, y: 2.6037362, z: 10.234563}
   m_Center: {x: 0.12626994, y: -0.21700943, z: 5.0251517}
+--- !u!114 &4673000107793945403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7468391750029889278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2957207161
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &8946734809795448178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e18f90d157fc64f8b4c9bc6beb4c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FanTrap
+  ShowTopMostFoldoutHeaderGroup: 1
   trapActiveTime: 3
   trapDuration: 5
   knockbackForce: 20
