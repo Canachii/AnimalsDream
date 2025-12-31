@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 public class ZebraActiveSkill : Skill
@@ -23,6 +24,8 @@ public class ZebraActiveSkill : Skill
             if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
                 continue;
             StartCoroutine(ApplySkill(target));
+
+            SpawnEffectServerRpc(target.transform.position);
         }
     }
 
@@ -52,6 +55,23 @@ public class ZebraActiveSkill : Skill
             {
                 Destroy(activeEffect);
             }
+        }
+    }
+
+    [Rpc(SendTo.Server)]
+    private void SpawnEffectServerRpc(Vector3 position)
+    {
+        SpawnEffectClientRpc(position);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SpawnEffectClientRpc(Vector3 position)
+    {
+        if (skillEffectPrefab != null)
+        {
+            GameObject effect = Instantiate(skillEffectPrefab, position, Quaternion.identity);
+            effect.transform.localScale = Vector3.one * effectScale;
+            Destroy(effect, 2.0f);
         }
     }
 
