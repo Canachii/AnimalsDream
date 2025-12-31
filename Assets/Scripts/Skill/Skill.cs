@@ -47,4 +47,3 @@ public abstract class Skill : NetworkBehaviour
 
     protected abstract void OnUse(PlayerController user);
 }
-
