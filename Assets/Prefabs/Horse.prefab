@@ -2031,6 +2031,7 @@ GameObject:
   - component: {fileID: 1938841069041011093}
   - component: {fileID: 3222550907913309103}
   - component: {fileID: 5119326352990966476}
+  - component: {fileID: 1375116586040444362}
   m_Layer: 9
   m_Name: Horse
   m_TagString: Player
@@ -2340,7 +2341,7 @@ MonoBehaviour:
   description: 
   speedMultiplier: 1.4
   duration: 2
-  knockbackForce: 10
+  knockbackPower: 15
   knockbackStunTime: 0.5
   targetLayer:
     serializedVersion: 2
@@ -2357,11 +2358,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c62fe0614de4445a8d00355b0a02dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
+  ShowTopMostFoldoutHeaderGroup: 1
   raceManager: {fileID: 0}
-  lastCheckpointIndex: -1
   lastCheckpointTransform: {fileID: 0}
-  finishTime: 0
-  finished: 0
 --- !u!114 &5119326352990966476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2378,6 +2377,28 @@ MonoBehaviour:
   excludeLayers:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &1375116586040444362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6667839711547219737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03eae6f0dcdcb3c469ea3ad1c67d643b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OwnerNetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -2089788878
+    DestinationState: -1481439722
+    TransitionDuration: 0.3690146
+    TriggerNameHash: -1481439722
+    TransitionIndex: 0
+  m_Animator: {fileID: 2673160301321121093}
 --- !u!1 &7464893555652023652
 GameObject:
   m_ObjectHideFlags: 0

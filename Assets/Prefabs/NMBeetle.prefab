@@ -8445,6 +8445,7 @@ GameObject:
   - component: {fileID: 3518269721820305961}
   - component: {fileID: 6123014846417323442}
   - component: {fileID: 1190384190323134064}
+  - component: {fileID: 6738421916380173645}
   m_Layer: 9
   m_Name: NMBeetle
   m_TagString: Player
@@ -8563,7 +8564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 907629097
+  GlobalObjectIdHash: 2513433365
   InScenePlacedSourceGlobalObjectIdHash: 2513433365
   DeferredDespawnTick: 0
   Ownership: 1
@@ -8768,11 +8769,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c62fe0614de4445a8d00355b0a02dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRaceProgress
+  ShowTopMostFoldoutHeaderGroup: 1
   raceManager: {fileID: 0}
-  lastCheckpointIndex: -1
   lastCheckpointTransform: {fileID: 0}
-  finishTime: 0
-  finished: 0
 --- !u!114 &1190384190323134064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8789,6 +8788,28 @@ MonoBehaviour:
   excludeLayers:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &6738421916380173645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8454982150863327786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03eae6f0dcdcb3c469ea3ad1c67d643b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OwnerNetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -2089788878
+    DestinationState: -1481439722
+    TransitionDuration: 0.3766913
+    TriggerNameHash: -1481439722
+    TransitionIndex: 0
+  m_Animator: {fileID: 456045405061852651}
 --- !u!1001 &6319442535679688392
 PrefabInstance:
   m_ObjectHideFlags: 0
