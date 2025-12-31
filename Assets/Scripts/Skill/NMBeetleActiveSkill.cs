@@ -60,7 +60,6 @@ public class BeetleActiveSkill : Skill
                 isHit = true;
             }
 
-            // 더미 체크용 (나중에 삭제해도 됨)
             DummyAutoMove targetDummy = col.GetComponentInParent<DummyAutoMove>();
             if (targetDummy != null)
             {
@@ -79,19 +78,28 @@ public class BeetleActiveSkill : Skill
             if (isHit) hitCount++;
         }
 
-        if (hitCount > 0 && connectedPassive != null)
+        if (hitCount > 0)
+        {
+            NotifyPassiveServerRpc(hitCount);
+        }
+    }
+
+    [Rpc(SendTo.Server)]
+    private void NotifyPassiveServerRpc(int hitCount)
+    {
+        if (connectedPassive != null)
         {
             connectedPassive.OnBiteSuccess(hitCount);
         }
     }
 
-    [Rpc(SendTo.Everyone)]
+    [Rpc(SendTo.Server)]
     private void SpawnEffectServerRpc(Vector3 position)
     {
         SpawnEffectClientRpc(position);
     }
 
-    [ClientRpc]
+    [Rpc(SendTo.Everyone)]
     private void SpawnEffectClientRpc(Vector3 position)
     {
         if (stunEffectPrefab != null)

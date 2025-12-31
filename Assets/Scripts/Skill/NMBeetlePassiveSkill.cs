@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 public class BeetlePassiveSkill : Skill
 {
@@ -17,11 +18,7 @@ public class BeetlePassiveSkill : Skill
     {
         movement = GetComponent<PlayerMovement>();
         skillName = " ";
-
-        if (speedEffectObject != null)
-        {
-            speedEffectObject.SetActive(false);
-        }
+        if (speedEffectObject != null) speedEffectObject.SetActive(false);
     }
 
     protected override void OnUse(PlayerController user) { }
@@ -32,6 +29,12 @@ public class BeetlePassiveSkill : Skill
 
         if (enemyCount <= 0) return;
 
+        TriggerBuffRpc(enemyCount);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void TriggerBuffRpc(int enemyCount)
+    {
         float totalBonus = enemyCount * speedBonusPerHit;
         float targetMultiplier = 1.0f + totalBonus;
 
@@ -42,25 +45,23 @@ public class BeetlePassiveSkill : Skill
 
     private IEnumerator SpeedBuffRoutine(float multiplier)
     {
-        Debug.Log($"[BeetlePassive] 이동 속도 증가 (x{multiplier})");
-
         if (speedEffectObject != null) speedEffectObject.SetActive(true);
 
-        if (movement != null)
+        if (IsOwner && movement != null)
         {
             movement.SetMoveSpeedMultiplier(multiplier);
+
+            Debug.Log($"[BeetlePassive] 이동 속도 증가 (x{multiplier})");
         }
 
         yield return new WaitForSeconds(speedBuffDuration);
 
-        if (movement != null)
-        {
-            movement.SetMoveSpeedMultiplier(1.0f);
-        }
+        if (IsOwner && movement != null) movement.SetMoveSpeedMultiplier(1.0f);
 
         if (speedEffectObject != null) speedEffectObject.SetActive(false);
 
         Debug.Log($"[BeetlePassive] 속도 정상화");
+
         buffCoroutine = null;
     }
 }
