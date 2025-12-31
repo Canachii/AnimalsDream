@@ -10,6 +10,9 @@ public class ZebraActiveSkill : Skill
     [SerializeField] private GameObject skillEffectPrefab;
     public float effectScale = 2.0f;
 
+    [Header("Effect Settings")]
+    [SerializeField] private Vector3 effectOffset = new Vector3(0, 1.5f, 0);
+
     protected override void OnUse(PlayerController user)
     {
         if (!user.IsOwner) return;
@@ -31,7 +34,10 @@ public class ZebraActiveSkill : Skill
             if (targetNetObj == null) continue;
 
             var zebraShield = target.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
-            if (zebraShield != null && zebraShield.TryBlock(this, gameObject)) continue;
+            if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
+            {
+                continue;
+            }
 
             ApplySkillClientRpc(targetNetObj.NetworkObjectId);
         }
@@ -62,8 +68,7 @@ public class ZebraActiveSkill : Skill
         {
             activeEffect = Instantiate(skillEffectPrefab, target.transform);
 
-            activeEffect.transform.localPosition = Vector3.zero;
-            activeEffect.transform.localRotation = Quaternion.identity;
+            activeEffect.transform.localPosition = effectOffset;
 
             activeEffect.transform.localScale = Vector3.one * effectScale;
 
