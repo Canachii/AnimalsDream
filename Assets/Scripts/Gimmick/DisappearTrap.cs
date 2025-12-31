@@ -1,5 +1,7 @@
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DisappearTrap : TriggerTrapController
 {
@@ -9,6 +11,8 @@ public class DisappearTrap : TriggerTrapController
     private Color originColor;
     private Color midColor = Color.yellow;
     private Color finalColor = Color.red;
+
+    private Coroutine routine;
 
     protected override void Awake()
     {
@@ -22,35 +26,105 @@ public class DisappearTrap : TriggerTrapController
         if (isProcessing) return;
         if (!IsTarget(collision.collider)) return;
 
-        OnTrapTriggered(collision.collider);
+        if (IsServer)
+        {
+            StartOnServer();
+        }
+        else
+        {
+            RequestStart_ServerRpc();
+        }
     }
 
-    protected override void OnTrapTriggered(Collider other)
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestStart_ServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (!isProcessing)
-            StartCoroutine(DisappearRoutine());
+        StartOnServer();
     }
-
-    private IEnumerator DisappearRoutine()
+    private void StartOnServer()
     {
+        if (isProcessing) return;
         isProcessing = true;
+
+        double t0 = NetworkManager.Singleton != null ? NetworkManager.Singleton.ServerTime.Time : 0;
+
+        StartDisappear_ClientRpc(t0);
+
+        if (IsServer && !IsClient)
+            StartLocalSequence(t0);
+    }
+
+
+    [ClientRpc]
+    private void StartDisappear_ClientRpc(double serverStartTime)
+    {
+        StartLocalSequence(serverStartTime);
+    }
+
+    private void StartLocalSequence(double serverStartTime)
+    {
+        if (routine != null) StopCoroutine(routine);
+
+        float elapsed = 0f;
+        if (NetworkManager.Singleton != null)
+        {
+            double now = NetworkManager.Singleton.ServerTime.Time;
+            elapsed = Mathf.Max(0f, (float)(now - serverStartTime));
+        }
+
+        routine = StartCoroutine(DisappearRoutine(elapsed));
+    }
+
+    protected override void OnTrapTriggered(Collider other) { }
+
+
+    private IEnumerator DisappearRoutine(float elapsed)
+    {
         float half = destroyTime * 0.5f;
+        float tYellowEnd = half;
+        float tRedEnd = destroyTime;
+        float tHiddenEnd = destroyTime + spawnTime;
 
-        trapRenderer.material.color = midColor;
-        yield return new WaitForSeconds(half);
+        // Yellow
+        if (elapsed < tYellowEnd)
+        {
+            SetColor(midColor);
+            yield return new WaitForSeconds(tYellowEnd - elapsed);
+            elapsed = tYellowEnd;
+        }
 
-        trapRenderer.material.color = finalColor;
-        yield return new WaitForSeconds(half);
+        // Red
+        if (elapsed < tRedEnd)
+        {
+            SetColor(finalColor);
+            yield return new WaitForSeconds(tRedEnd - elapsed);
+            elapsed = tRedEnd;
+        }
 
-        trapCollider.enabled = false;
-        trapRenderer.enabled = false;
+        // Hidden
+        if (elapsed < tHiddenEnd)
+        {
+            SetVisible(false);
+            yield return new WaitForSeconds(tHiddenEnd - elapsed);
+            elapsed = tHiddenEnd;
+        }
 
-        yield return new WaitForSeconds(spawnTime);
-
-        trapRenderer.material.color = originColor;
-        trapCollider.enabled = true;
-        trapRenderer.enabled = true;
+        // Restore
+        SetColor(originColor);
+        SetVisible(true);
 
         isProcessing = false;
+        routine = null;
+    }
+    private void SetVisible(bool on)
+    {
+        if (trapCollider != null) trapCollider.enabled = on;
+        if (trapRenderer != null) trapRenderer.enabled = on;
+    }
+
+    private void SetColor(Color c)
+    {
+        if (trapRenderer == null) return;
+        trapRenderer.material.color = c; 
     }
 }
