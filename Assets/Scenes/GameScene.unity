@@ -640,6 +640,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7120861727204878745}
   - component: {fileID: 8044476261208546839}
+  - component: {fileID: 8044476261208546840}
   m_Layer: 0
   m_Name: RespawnSystem
   m_TagString: Untagged
@@ -980,7 +981,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db5488eb0789cc545998027396c4b826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RespawnSystem
+  ShowTopMostFoldoutHeaderGroup: 1
   invincibleLayer: 8
+--- !u!114 &8044476261208546840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318629637842696822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 116018723
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &8120498705896823474
 GameObject:
   m_ObjectHideFlags: 0
