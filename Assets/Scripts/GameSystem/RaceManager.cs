@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RaceManager : NetworkBehaviour
 {
-    private List<PlayerRaceProgress> players = new List<PlayerRaceProgress>();
+    private readonly List<PlayerRaceProgress> players = new();
     [SerializeField] private GameFlow gameFlow;
     [SerializeField] private Transform[] checkPoint;
 
@@ -27,13 +27,26 @@ public class RaceManager : NetworkBehaviour
         endScheduled = false;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            finishPlayerCount = 0;
+            endScheduled = false;
+        }
+    }
+
     private void Update()
     {
+        if (!IsServer) return;
+        if (checkPoint == null || checkPoint.Length == 0) return;
         UpdateRanks();
     }
 
     private void UpdateRanks()
     {
+        players.RemoveAll(p => p == null);
+
         for (int i = finishPlayerCount; i < players.Count - 1; i++)
         {
             for (int j = i + 1; j < players.Count; j++)
@@ -57,60 +70,72 @@ public class RaceManager : NetworkBehaviour
 
                 if (shouldSwap)
                 {
-                    var temp = players[i];
-                    players[i] = players[j];
-                    players[j] = temp;
+                    (players[i], players[j]) = (players[j], players[i]);
                 }
             }
         }
 
-        for (int i = finishPlayerCount; i < players.Count; i++)
+        for (int i = 0; i < players.Count; i++)
             players[i].SetRank(i + 1);
     }
 
     public void Finish(PlayerRaceProgress p)
     {
         if (p == null) return;
-        if (NetworkManager.Singleton == null)
-        {
-            Debug.LogWarning("[RaceManager] NetworkManager.Singleton is null; cannot compute server time.");
-            return;
-        }
+        if (NetworkManager.Singleton == null) return;
 
-        if (NetworkManager.Singleton.IsServer)
+        if (IsServer)
         {
-            Debug.Log($"[RaceManager] 서버에서 Finish 처리: {p.name}");
             FinishInternal(p);
             return;
         }
 
         var netObj = p.GetComponent<NetworkObject>();
-        if (netObj == null)
-        {
-            Debug.LogWarning("[RaceManager] Player has no NetworkObject; cannot request finish.");
-            return;
-        }
-        Debug.Log($"[RaceManager] 클라이언트에서 Finish 호출, 서버로 요청: {p.name}");
+        if (netObj == null) return;
+        
         FinishServerRpc(netObj);
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void FinishServerRpc(NetworkObjectReference playerRef)
     {
-        Debug.Log("[RaceManager] 서버에서 FinishServerRpc 수신.");
+        if (!IsServer) return;
+
         if (!playerRef.TryGet(out var netObj)) return;
         var progress = netObj.GetComponent<PlayerRaceProgress>();
         if (progress == null) return;
+        
         FinishInternal(progress);
     }
 
     private void FinishInternal(PlayerRaceProgress p)
     {
+        if (!IsServer) return;
         if (gameFlow.State != MatchState.Playing) return;
         if (p.finished) return;
+
+        int idx = players.IndexOf(p);
+        if (idx < 0)
+        {
+            players.Add(p);
+            idx = players.Count - 1;
+        }
+
+        if (idx != finishPlayerCount)
+        {
+            var temp = players[finishPlayerCount];
+            players[finishPlayerCount] = p;
+            players[idx] = temp;
+        }
+
         p.finished = true;
         p.finishTime = (float)(NetworkManager.Singleton.ServerTime.Time - gameFlow.MatchStartTime);
-        Debug.Log($"[RaceManager] 완주 기록 저장: {p.name}, 시간={p.finishTime:F3}");
+
+        finishPlayerCount++;
+
+        // 완주 직후 랭크 반영
+        for (int i = 0; i < players.Count; i++)
+            players[i].SetRank(i + 1);
 
         StartCoroutine(ReachedGoalLine());
 
@@ -118,30 +143,39 @@ public class RaceManager : NetworkBehaviour
         {
             endScheduled = true;
             StartCoroutine(EndMatchAfterDelay());
-        }
-        finishPlayerCount++;
+        };
     }
     
     private IEnumerator ReachedGoalLine()
     {
         yield return new WaitForSeconds(1f);
-        gameFlow.ReachedGoalLine();
+        if (IsServer) gameFlow.ReachedGoalLine();
     }
 
     private IEnumerator EndMatchAfterDelay()
     {
         yield return new WaitForSeconds(endDelaySeconds);
-        gameFlow.FinishMatch();
+        if (IsServer) gameFlow.FinishMatch();
     }
 
     public void RegisterPlayer(PlayerRaceProgress p)
     {
+        if (p == null) return;
+        if (players.Contains(p)) return;
         players.Add(p);
     }
 
     public void UnregisterPlayer(PlayerRaceProgress p)
     {
-        players.Remove(p);
+        if (p == null) return;
+
+        int idx = players.IndexOf(p);
+        if (idx < 0) return;
+
+        players.RemoveAt(idx);
+
+        if (IsServer && idx < finishPlayerCount)
+            finishPlayerCount = Mathf.Max(0, finishPlayerCount - 1);
     }
 
     public int PlayerCount => players.Count;
