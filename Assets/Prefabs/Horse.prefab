@@ -2318,6 +2318,7 @@ MonoBehaviour:
   stackAuraParticle: {fileID: 7712780175545586032}
   baseEmissionRate: 5
   maxEmissionMultiplier: 1.5
+  currentStackView: 0
   currentSpeed: 0
   moveTimer: 0
 --- !u!114 &1938841069041011093
@@ -2340,9 +2341,10 @@ MonoBehaviour:
   speedMultiplier: 1.4
   duration: 2
   knockbackForce: 10
+  knockbackStunTime: 0.5
   targetLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 512
 --- !u!114 &3222550907913309103
 MonoBehaviour:
   m_ObjectHideFlags: 0

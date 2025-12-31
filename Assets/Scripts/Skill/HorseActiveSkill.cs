@@ -10,9 +10,9 @@ public class HorseActiveSkill : Skill
     [Tooltip("Skill duration")]
     public float duration = 2.0f;
 
-    [Tooltip("Knockback Power")]
-    public float knockbackForce = 20.0f;
-    public float knockbackStunTime = 0.5f;
+    [Tooltip("Knockback Power (Velocity Change)")]
+    public float knockbackPower = 15.0f;
+    public float knockbackStunTime = 0.8f;
 
     public LayerMask targetLayer;
 
@@ -21,6 +21,9 @@ public class HorseActiveSkill : Skill
     );
 
     public bool IsRushing => isRushingNetVar.Value;
+
+    private float lastHitTime = 0f;
+    private const float HIT_COOLDOWN = 0.5f;
 
     private void Reset()
     {
@@ -71,8 +74,6 @@ public class HorseActiveSkill : Skill
     {
         AudioManager.Instance?.PlayAtPoint(SoundId.Event_HorseSkill, transform.position);
 
-        Debug.Log($"[{skillName}] Rush Start!");
-
         if (IsOwner)
         {
             movement.SetMoveSpeedMultiplier(speedMultiplier);
@@ -90,22 +91,38 @@ public class HorseActiveSkill : Skill
 
     private void OnCollisionEnter(Collision collision)
     {
+        HandleCollision(collision.gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        HandleCollision(other.gameObject);
+    }
+
+    private void HandleCollision(GameObject hitObj)
+    {
         if (!IsOwner) return;
         if (!IsRushing) return;
 
-        if (((1 << collision.gameObject.layer) & targetLayer) != 0)
+        if (Time.time - lastHitTime < HIT_COOLDOWN) return;
+
+        if (((1 << hitObj.layer) & targetLayer) == 0) return;
+        if (hitObj == gameObject) return;
+
+        var targetNetObj = hitObj.GetComponentInParent<NetworkObject>();
+        if (targetNetObj != null)
         {
-            if (collision.gameObject == gameObject) return;
+            lastHitTime = Time.time;
 
-            var targetNetObj = collision.gameObject.GetComponentInParent<NetworkObject>();
-            if (targetNetObj != null)
-            {
-                Vector3 hitDir = collision.transform.position - transform.position;
-                hitDir.y = 0.2f;
-                hitDir.Normalize();
+            Vector3 hitDir = targetNetObj.transform.position - transform.position;
+            hitDir.y = 0;
+            hitDir.Normalize();
 
-                RequestKnockbackServerRpc(targetNetObj.NetworkObjectId, hitDir);
-            }
+            hitDir += Vector3.up * 0.8f;
+            hitDir.Normalize();
+
+            Debug.Log($"[HorseSkill] Hit Target: {targetNetObj.name}, Requesting Knockback");
+            RequestKnockbackServerRpc(targetNetObj.NetworkObjectId, hitDir);
         }
     }
 
@@ -118,6 +135,7 @@ public class HorseActiveSkill : Skill
         var zebraShield = targetNetObj.GetComponent<ZebraPsssiveSkill>();
         if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
         {
+            Debug.Log("[HorseSkill] Blocked by Shield");
             return;
         }
 
@@ -144,14 +162,15 @@ public class HorseActiveSkill : Skill
 
     private IEnumerator CoKnockbackProcess(PlayerController controller, PlayerMovement movement, Rigidbody rb, Vector3 dir)
     {
+        Debug.Log($"[HorseSkill] Applying Force to {controller.name}");
+
         controller.ApplyCrowdControl(knockbackStunTime);
 
         movement.enabled = false;
 
         rb.isKinematic = false;
-        rb.AddForce(dir * knockbackForce, ForceMode.Impulse);
-
-        Debug.Log($"[{skillName}] Knockback Applied to {controller.name}");
+        rb.linearVelocity = Vector3.zero;
+        rb.AddForce(dir * knockbackPower, ForceMode.VelocityChange);
 
         yield return new WaitForSeconds(knockbackStunTime);
 
