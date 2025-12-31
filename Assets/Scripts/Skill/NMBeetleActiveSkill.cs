@@ -32,7 +32,14 @@ public class BeetleActiveSkill : Skill
 
     private void PerformBite(PlayerController user)
     {
-        AudioManager.Instance?.PlayAtPoint(SoundId.Event_SpiderSkill, transform.position);
+        if (!user.IsOwner) return;
+
+        RequestBiteServerRpc(user.GetComponent<NetworkObject>().NetworkObjectId);
+    }
+
+    [ServerRpc]
+    private void RequestBiteServerRpc(ulong userId)
+    {
         Vector3 center = transform.position
                          + (transform.forward * biteForwardOffset)
                          + (Vector3.up * biteHeightOffset);
@@ -43,7 +50,9 @@ public class BeetleActiveSkill : Skill
 
         foreach (var col in allColliders)
         {
-            if (col.transform.root == user.transform.root) continue;
+            var colNetObj = col.GetComponentInParent<NetworkObject>();
+            if (colNetObj != null && colNetObj.NetworkObjectId == userId) continue;
+
             if (((1 << col.gameObject.layer) & targetLayer) == 0) continue;
 
             bool isHit = false;
@@ -52,25 +61,25 @@ public class BeetleActiveSkill : Skill
             PlayerController targetController = col.GetComponentInParent<PlayerController>();
             if (targetController != null)
             {
-                targetController.ApplyCrowdControl(stunDuration);
+                var zebraShield = targetController.GetComponent<ZebraPsssiveSkill>();
+                if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
+                {
+                    continue;
+                }
 
-                SpawnEffectServerRpc(spawnPos);
+                ApplyStunClientRpc(targetController.GetComponent<NetworkObject>().NetworkObjectId);
+
+                SpawnEffectClientRpc(spawnPos);
 
                 Debug.Log($"[BeetleSkill] 플레이어({targetController.name}) 명중");
                 isHit = true;
             }
 
-            // 더미 체크용 (나중에 삭제해도 됨)
             DummyAutoMove targetDummy = col.GetComponentInParent<DummyAutoMove>();
             if (targetDummy != null)
             {
                 targetDummy.ApplyStun(stunDuration);
-
-                if (stunEffectPrefab != null)
-                {
-                    GameObject effect = Instantiate(stunEffectPrefab, spawnPos, Quaternion.identity);
-                    Destroy(effect, effectDuration);
-                }
+                SpawnEffectClientRpc(spawnPos);
 
                 Debug.Log($"[BeetleSkill] 더미({targetDummy.name}) 명중");
                 isHit = true;
@@ -85,15 +94,25 @@ public class BeetleActiveSkill : Skill
         }
     }
 
-    [Rpc(SendTo.Everyone)]
-    private void SpawnEffectServerRpc(Vector3 position)
+    [ClientRpc]
+    private void ApplyStunClientRpc(ulong targetId)
     {
-        SpawnEffectClientRpc(position);
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetNetObj))
+        {
+            PlayerController target = targetNetObj.GetComponent<PlayerController>();
+            
+            if (target != null && target.IsOwner)
+            {
+                target.ApplyCrowdControl(stunDuration);
+            }
+        }
     }
 
     [ClientRpc]
     private void SpawnEffectClientRpc(Vector3 position)
     {
+        AudioManager.Instance?.PlayAtPoint(SoundId.Event_SpiderSkill, transform.position);
+
         if (stunEffectPrefab != null)
         {
             GameObject effect = Instantiate(stunEffectPrefab, position, Quaternion.identity);

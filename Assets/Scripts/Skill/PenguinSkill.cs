@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 public class PenguinSkill : Skill
 {
@@ -25,18 +26,41 @@ public class PenguinSkill : Skill
 
     protected override void OnUse(PlayerController user)
     {
+        if (!user.IsOwner) return;
+
         Debug.Log($"Skill Activated: {skillName}");
 
+        RequestSkillServerRpc(user.GetComponent<NetworkObject>().NetworkObjectId);
+    }
+
+    [ServerRpc]
+    private void RequestSkillServerRpc(ulong userId)
+    {
         PlayerMovement[] allMovements = FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None);
 
         foreach (PlayerMovement target in allMovements)
         {
-            if (target != user.GetComponent<PlayerMovement>())
-            {
-                var zebraShield = target.GetComponentInParent<ZebraPsssiveSkill>();
-                if (zebraShield != null && zebraShield.TryBlock(this, user.gameObject))
-                    continue;
+            var targetNetObj = target.GetComponent<NetworkObject>();
+            if (targetNetObj == null) continue;
 
+            if (targetNetObj.NetworkObjectId == userId) continue;
+
+            var zebraShield = target.GetComponentInParent<ZebraPsssiveSkill>();
+            if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
+                continue;
+
+            ApplySkillClientRpc(targetNetObj.NetworkObjectId);
+        }
+    }
+
+    [ClientRpc]
+    private void ApplySkillClientRpc(ulong targetId)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetNetObj))
+        {
+            PlayerMovement target = targetNetObj.GetComponent<PlayerMovement>();
+            if (target != null)
+            {
                 StartCoroutine(ApplySlowSafely(target));
             }
         }
@@ -44,28 +68,29 @@ public class PenguinSkill : Skill
 
     private IEnumerator ApplySlowSafely(PlayerMovement target)
     {
-        // Apply slow effect
-        target.SetMoveSpeedMultiplier(slowRatio);
+        if (target.GetComponent<NetworkObject>().IsOwner)
+        {
+            target.SetMoveSpeedMultiplier(slowRatio);
+        }
 
-        // Spawn effect
         GameObject activeEffect = null;
         if (slowEffectPrefab != null)
         {
             activeEffect = Instantiate(slowEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
+
+            activeEffect.transform.localPosition = Vector3.zero;
             activeEffect.transform.localScale = Vector3.one * effectScale;
+
             AudioManager.Instance?.PlayAtPoint(SoundId.Event_PenguinSkill, activeEffect.transform.position);
         }
 
-        // Wait for duration
         yield return new WaitForSeconds(duration);
 
-        // Restore speed
-        if (target != null)
+        if (target != null && target.GetComponent<NetworkObject>().IsOwner)
         {
             target.SetMoveSpeedMultiplier(1.0f);
         }
 
-        // Remove effect
         if (activeEffect != null)
         {
             ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();

@@ -8563,7 +8563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3892072857
+  GlobalObjectIdHash: 907629097
   InScenePlacedSourceGlobalObjectIdHash: 2513433365
   DeferredDespawnTick: 0
   Ownership: 1
@@ -8721,13 +8721,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6efe9a3ba28dd2947a6efd2b1c84e0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NMBeetleActiveSkill
+  ShowTopMostFoldoutHeaderGroup: 1
   skillName: NMBite
   icon: {fileID: -212665834, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 1
   description: 
   stunDuration: 2
-  biteBoxSize: {x: 2, y: 1, z: 2}
-  biteForwardOffset: 1.8
+  biteBoxSize: {x: 4, y: 1, z: 3}
+  biteForwardOffset: 2
   biteHeightOffset: 0.7
   stunEffectPrefab: {fileID: 2046140665488341963, guid: 9d292543345e17f47a88af867d7eabbd, type: 3}
   effectHeight: 2
@@ -8747,6 +8748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afffb3eebf4d791478f5302851dd263d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BeetlePassiveSkill
+  ShowTopMostFoldoutHeaderGroup: 1
   skillName: NMPassive
   icon: {fileID: 1266175817, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
   cooldown: 1

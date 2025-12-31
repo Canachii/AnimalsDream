@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 public class BeetlePassiveSkill : Skill
 {
@@ -13,6 +14,10 @@ public class BeetlePassiveSkill : Skill
     [Header("VFX")]
     [SerializeField] private GameObject speedEffectObject;
 
+    private readonly NetworkVariable<bool> isBuffActive = new NetworkVariable<bool>(
+        false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server
+    );
+
     private void Awake()
     {
         movement = GetComponent<PlayerMovement>();
@@ -24,6 +29,18 @@ public class BeetlePassiveSkill : Skill
         }
     }
 
+    public override void OnNetworkSpawn()
+    {
+        isBuffActive.OnValueChanged += OnBuffStateChanged;
+
+        if (speedEffectObject != null) speedEffectObject.SetActive(isBuffActive.Value);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        isBuffActive.OnValueChanged -= OnBuffStateChanged;
+    }
+
     protected override void OnUse(PlayerController user) { }
 
     public void OnBiteSuccess(int enemyCount)
@@ -31,20 +48,27 @@ public class BeetlePassiveSkill : Skill
         Debug.Log($"[BeetlePassive] 패시브 발동 요청됨 (물린 적: {enemyCount}명)");
 
         if (enemyCount <= 0) return;
+        if (!IsServer) return;
+
+        isBuffActive.Value = true;
+
+        ApplyBuffClientRpc(enemyCount);
+    }
+
+    [ClientRpc]
+    private void ApplyBuffClientRpc(int enemyCount)
+    {
+        if (!IsOwner) return;
 
         float totalBonus = enemyCount * speedBonusPerHit;
         float targetMultiplier = 1.0f + totalBonus;
 
         if (buffCoroutine != null) StopCoroutine(buffCoroutine);
-
         buffCoroutine = StartCoroutine(SpeedBuffRoutine(targetMultiplier));
     }
-
     private IEnumerator SpeedBuffRoutine(float multiplier)
     {
         Debug.Log($"[BeetlePassive] 이동 속도 증가 (x{multiplier})");
-
-        if (speedEffectObject != null) speedEffectObject.SetActive(true);
 
         if (movement != null)
         {
@@ -58,9 +82,21 @@ public class BeetlePassiveSkill : Skill
             movement.SetMoveSpeedMultiplier(1.0f);
         }
 
-        if (speedEffectObject != null) speedEffectObject.SetActive(false);
-
         Debug.Log($"[BeetlePassive] 속도 정상화");
         buffCoroutine = null;
+
+        RequestEndBuffServerRpc();
+    }
+
+    [ServerRpc]
+    private void RequestEndBuffServerRpc()
+    {
+        isBuffActive.Value = false;
+    }
+
+    private void OnBuffStateChanged(bool prev, bool current)
+    {
+        if (speedEffectObject != null)
+            speedEffectObject.SetActive(current);
     }
 }

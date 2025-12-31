@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public abstract class Skill : MonoBehaviour
+public abstract class Skill : NetworkBehaviour
 {
     [Header("Info")]
     public string skillName;
@@ -46,4 +47,3 @@ public abstract class Skill : MonoBehaviour
 
     protected abstract void OnUse(PlayerController user);
 }
-

@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 public class ZebraPsssiveSkill : Skill
 {
-
     [Header("Shield Visual")]
     [SerializeField] private SkinnedMeshRenderer shileldRenderer;
 
@@ -11,9 +11,14 @@ public class ZebraPsssiveSkill : Skill
     [SerializeField] private float rechargeSeconds = 5f;
     [SerializeField] private bool startActive = true;
 
-    public bool IsShieldActive => isShieldActive;
+    private readonly NetworkVariable<bool> isShieldActive = new NetworkVariable<bool>(
+        false,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
 
-    private bool isShieldActive;
+    public bool IsShieldActive => isShieldActive.Value;
+
     private Coroutine rechargeCo;
     private PlayerController owner;
 
@@ -25,9 +30,20 @@ public class ZebraPsssiveSkill : Skill
             Debug.LogWarning("[ZebraShield] shileldRenderer is not assigned.");
     }
 
-    private void OnEnable()
+    public override void OnNetworkSpawn()
     {
-        SetShield(startActive);
+        isShieldActive.OnValueChanged += OnShieldStateChanged;
+
+        if (IsServer)
+        {
+            isShieldActive.Value = startActive;
+        }
+        UpdateShieldVisual(isShieldActive.Value);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        isShieldActive.OnValueChanged -= OnShieldStateChanged;
     }
 
     private void OnDisable()
@@ -38,7 +54,9 @@ public class ZebraPsssiveSkill : Skill
 
     public bool TryBlock(Skill incomingSkill, GameObject attacker)
     {
-        if (!isShieldActive) return false;
+        if (!IsServer) return false;
+
+        if (!isShieldActive.Value) return false;
 
         Consume();
         return true;
@@ -46,7 +64,7 @@ public class ZebraPsssiveSkill : Skill
 
     private void Consume()
     {
-        SetShield(false);
+        isShieldActive.Value = false;
 
         if (rechargeCo != null) StopCoroutine(rechargeCo);
         rechargeCo = StartCoroutine(CoRecharge());
@@ -55,30 +73,23 @@ public class ZebraPsssiveSkill : Skill
     private IEnumerator CoRecharge()
     {
         yield return new WaitForSeconds(rechargeSeconds);
-        SetShield(true);
+        isShieldActive.Value = true;
         rechargeCo = null;
     }
 
-    private void SetShield(bool active)
+    private void OnShieldStateChanged(bool previousValue, bool newValue)
     {
-        isShieldActive = active;
+        UpdateShieldVisual(newValue);
+    }
 
+    private void UpdateShieldVisual(bool active)
+    {
         if (shileldRenderer != null)
             shileldRenderer.enabled = active;
     }
-
 
     protected override void OnUse(PlayerController user)
     {
         throw new System.NotImplementedException();
     }
-
-
-
-
-
-
-
-
-
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using System.Globalization;
 using Unity.Cinemachine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -28,9 +27,17 @@ public class PlayerMovement : NetworkBehaviour
     private Vector2 moveInput;
 
     public bool IsGrounded { get; private set; } = true;
+
     private bool isForcedForward = false;
 
-    // Animator parameter hashes
+    private readonly NetworkVariable<float> netMoveSpeedMultiplier = new NetworkVariable<float>(
+        1.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server
+    );
+
+    private readonly NetworkVariable<bool> netForcedForward = new NetworkVariable<bool>(
+        false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server
+    );
+
     private static readonly int SpeedHash = Animator.StringToHash("speed");
     private static readonly int IsGroundedHash = Animator.StringToHash("isGrounded");
     private static readonly int JumpHash = Animator.StringToHash("jump");
@@ -44,48 +51,53 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        netMoveSpeedMultiplier.OnValueChanged += (oldVal, newVal) => moveSpeed = baseMoveSpeed * newVal;
+        netForcedForward.OnValueChanged += (prev, current) => isForcedForward = current;
+
+        moveSpeed = baseMoveSpeed * netMoveSpeedMultiplier.Value;
+        isForcedForward = netForcedForward.Value;
+
         if (IsOwner)
         {
             rb.isKinematic = false;
-
             if (playerVcam != null)
             {
                 playerVcam.gameObject.SetActive(true);
-                playerVcam.Priority = 10; // 메인 카메라에 붙어있는 Brain이 얘를 선택하도록..
-
+                playerVcam.Priority = 10;
                 GameObject mainCam = GameObject.FindGameObjectWithTag("MainCamera");
-                if (mainCam != null)
-                {
-                    camTransform = mainCam.transform;
-                }
+                if (mainCam != null) camTransform = mainCam.transform;
             }
         }
         else
         {
-            // 내꺼 아니면 카메라 끄기
             if (playerVcam != null)
             {
                 playerVcam.gameObject.SetActive(false);
                 playerVcam.Priority = 0;
             }
-
-            if (rb != null)
-            {
-                rb.isKinematic = true;
-            }
+            if (rb != null) rb.isKinematic = true;
         }
     }
 
-    public void SetMoveInput(Vector2 input)
-    {
-        moveInput = input;
-    }
+    public void SetMoveInput(Vector2 input) => moveInput = input;
 
-    // force forward (horse skill)
     public void SetForcedForward(bool active)
     {
-        isForcedForward = active;
+        if (IsServer) netForcedForward.Value = active;
+        else if (IsOwner) RequestForcedForwardServerRpc(active);
     }
+
+    [Rpc(SendTo.Server)]
+    private void RequestForcedForwardServerRpc(bool active) => netForcedForward.Value = active;
+
+    public void SetMoveSpeedMultiplier(float multiplier)
+    {
+        if (IsServer) netMoveSpeedMultiplier.Value = multiplier;
+        else if (IsOwner) RequestSpeedChangeServerRpc(multiplier);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void RequestSpeedChangeServerRpc(float multiplier) => netMoveSpeedMultiplier.Value = multiplier;
 
     public void Update()
     {
@@ -93,18 +105,11 @@ public class PlayerMovement : NetworkBehaviour
 
         if (camTransform == null)
         {
-            if (Camera.main != null)
-            {
-                camTransform = Camera.main.transform;
-            }
-            else
-            {
-                return;
-            }
+            if (Camera.main != null) camTransform = Camera.main.transform;
+            else return;
         }
-        
-        float speed = isForcedForward ? 1f : moveInput.magnitude;
 
+        float speed = isForcedForward ? 1f : moveInput.magnitude;
         animator.SetFloat(SpeedHash, speed, 0.1f, Time.deltaTime);
         animator.SetBool(IsGroundedHash, IsGrounded);
     }
@@ -114,19 +119,10 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner) return;
 
         Vector3 move;
-
-        // move forward direction camara looking
-        if (isForcedForward)
-        {
-            move = transform.forward;
-        }
-        else
-        {
-            move = GetCameraRelativeMoveDirection(moveInput);
-        }
+        if (isForcedForward) move = transform.forward;
+        else move = GetCameraRelativeMoveDirection(moveInput);
 
         float moveSqrMag = move.sqrMagnitude;
-
         if (moveSqrMag > 1f)
         {
             move.Normalize();
@@ -136,23 +132,13 @@ public class PlayerMovement : NetworkBehaviour
         if (!isForcedForward && moveSqrMag > 0.0001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(move, Vector3.up);
-
-            Quaternion newRot = Quaternion.Slerp(
-                rb.rotation,
-                targetRot,
-                rotationSpeed * Time.fixedDeltaTime
-            );
+            Quaternion newRot = Quaternion.Slerp(rb.rotation, targetRot, rotationSpeed * Time.fixedDeltaTime);
             rb.MoveRotation(newRot);
         }
 
-        // 이동 처리
         rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
 
-        // 바닥 체크
-        IsGrounded = Physics.Raycast(transform.position + Vector3.up * 0.1f,
-                                 Vector3.down,
-                                 groundCheckDistance,
-                                 groundMask);
+        IsGrounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, groundCheckDistance, groundMask);
     }
 
     private Vector3 GetCameraRelativeMoveDirection(Vector2 input)
@@ -160,11 +146,8 @@ public class PlayerMovement : NetworkBehaviour
         Vector3 forward = camTransform.forward;
         Vector3 right = camTransform.right;
 
-        forward.y = 0;
-        right.y = 0;
-
-        forward.Normalize();
-        right.Normalize();
+        forward.y = 0; right.y = 0;
+        forward.Normalize(); right.Normalize();
 
         return forward * input.y + right * input.x;
     }
@@ -176,13 +159,7 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 v = rb.linearVelocity;
             v.y = jumpHeight;
             rb.linearVelocity = v;
-
             animator.SetTrigger(JumpHash);
         }
-    }
-
-    public void SetMoveSpeedMultiplier(float multiplier) // player default speed * multiplier
-    {
-        moveSpeed = baseMoveSpeed * multiplier;
     }
 }
