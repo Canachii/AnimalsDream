@@ -10,7 +10,9 @@ public class HorseActiveSkill : Skill
     [Tooltip("Skill duration")]
     public float duration = 2.0f;
 
-    public float knockbackForce = 10.0f;
+    [Tooltip("Knockback Power")]
+    public float knockbackForce = 20.0f;
+    public float knockbackStunTime = 0.5f;
 
     public LayerMask targetLayer;
 
@@ -23,8 +25,8 @@ public class HorseActiveSkill : Skill
     private void Reset()
     {
         cooldown = 10f;
-        skillName = "skillName";
-        description = "description";
+        skillName = "Wild Rush";
+        description = "Gives a speed boost and knocks back enemies.";
     }
 
     protected override void OnUse(PlayerController user)
@@ -32,7 +34,6 @@ public class HorseActiveSkill : Skill
         if (!user.IsOwner) return;
 
         PlayerMovement movement = user.GetComponent<PlayerMovement>();
-
         if (!movement.IsGrounded)
         {
             Debug.Log($"[{skillName}] !isGrounded");
@@ -46,9 +47,7 @@ public class HorseActiveSkill : Skill
     private void RequestRushServerRpc()
     {
         isRushingNetVar.Value = true;
-
         StartRushClientRpc();
-
         StartCoroutine(ResetRushingStateCo());
     }
 
@@ -72,7 +71,7 @@ public class HorseActiveSkill : Skill
     {
         AudioManager.Instance?.PlayAtPoint(SoundId.Event_HorseSkill, transform.position);
 
-        Debug.Log($"[{skillName}] rush start ( speed : {speedMultiplier}, duration : {duration}s)");
+        Debug.Log($"[{skillName}] Rush Start!");
 
         if (IsOwner)
         {
@@ -87,9 +86,6 @@ public class HorseActiveSkill : Skill
             movement.SetMoveSpeedMultiplier(1.0f);
             movement.SetForcedForward(false);
         }
-
-
-        Debug.Log($"[{skillName}] Skill Done");
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -104,44 +100,62 @@ public class HorseActiveSkill : Skill
             var targetNetObj = collision.gameObject.GetComponentInParent<NetworkObject>();
             if (targetNetObj != null)
             {
-                RequestKnockbackServerRpc(targetNetObj.NetworkObjectId);
+                Vector3 hitDir = collision.transform.position - transform.position;
+                hitDir.y = 0.2f;
+                hitDir.Normalize();
+
+                RequestKnockbackServerRpc(targetNetObj.NetworkObjectId, hitDir);
             }
         }
     }
 
     [ServerRpc]
-    private void RequestKnockbackServerRpc(ulong targetId)
+    private void RequestKnockbackServerRpc(ulong targetId, Vector3 pushDir)
     {
         if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetNetObj))
             return;
 
-        GameObject targetObj = targetNetObj.gameObject;
-
-        var zebraShield = targetObj.GetComponentInParent<ZebraPsssiveSkill>();
+        var zebraShield = targetNetObj.GetComponent<ZebraPsssiveSkill>();
         if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
         {
-            Debug.Log("Horse Rush Blocked by Zebra Shield");
             return;
         }
 
-        ApplyKnockbackClientRpc(targetId);
+        ApplyKnockbackClientRpc(targetId, pushDir);
     }
 
     [ClientRpc]
-    private void ApplyKnockbackClientRpc(ulong targetId)
+    private void ApplyKnockbackClientRpc(ulong targetId, Vector3 pushDir)
     {
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetNetObj))
         {
-            Rigidbody targetRb = targetNetObj.GetComponent<Rigidbody>();
-            if (targetRb != null)
-            {
-                Vector3 knockbackDir = targetNetObj.transform.position - transform.position;
-                knockbackDir.y = 0.2f;
-                knockbackDir.Normalize();
+            if (!targetNetObj.IsOwner) return;
 
-                targetRb.AddForce(knockbackDir * knockbackForce, ForceMode.Impulse);
-                Debug.Log($"[{skillName}] : {targetNetObj.name} -> knockback applied!");
+            PlayerController targetController = targetNetObj.GetComponent<PlayerController>();
+            PlayerMovement targetMovement = targetNetObj.GetComponent<PlayerMovement>();
+            Rigidbody targetRb = targetNetObj.GetComponent<Rigidbody>();
+
+            if (targetController != null && targetMovement != null && targetRb != null)
+            {
+                StartCoroutine(CoKnockbackProcess(targetController, targetMovement, targetRb, pushDir));
             }
         }
+    }
+
+    private IEnumerator CoKnockbackProcess(PlayerController controller, PlayerMovement movement, Rigidbody rb, Vector3 dir)
+    {
+        controller.ApplyCrowdControl(knockbackStunTime);
+
+        movement.enabled = false;
+
+        rb.isKinematic = false;
+        rb.AddForce(dir * knockbackForce, ForceMode.Impulse);
+
+        Debug.Log($"[{skillName}] Knockback Applied to {controller.name}");
+
+        yield return new WaitForSeconds(knockbackStunTime);
+
+        rb.linearVelocity = Vector3.zero;
+        movement.enabled = true;
     }
 }
