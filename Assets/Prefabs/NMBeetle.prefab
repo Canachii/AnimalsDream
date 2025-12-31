@@ -8445,7 +8445,7 @@ GameObject:
   - component: {fileID: 3518269721820305961}
   - component: {fileID: 6123014846417323442}
   - component: {fileID: 1190384190323134064}
-  - component: {fileID: 1124279158470931113}
+  - component: {fileID: 6738421916380173645}
   m_Layer: 9
   m_Name: NMBeetle
   m_TagString: Player
@@ -8788,7 +8788,7 @@ MonoBehaviour:
   excludeLayers:
     serializedVersion: 2
     m_Bits: 0
---- !u!114 &1124279158470931113
+--- !u!114 &6738421916380173645
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8797,9 +8797,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8454982150863327786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Script: {fileID: 11500000, guid: 03eae6f0dcdcb3c469ea3ad1c67d643b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  m_EditorClassIdentifier: Assembly-CSharp::OwnerNetworkAnimator
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList:
   - IsCrossFadeExit: 0

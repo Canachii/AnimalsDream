@@ -1201,7 +1201,7 @@ GameObject:
   - component: {fileID: 4617185948800477200}
   - component: {fileID: 8277000744775941054}
   - component: {fileID: 6449943399526784574}
-  - component: {fileID: 1378788697695023630}
+  - component: {fileID: 8334925718418576411}
   m_Layer: 9
   m_Name: Penguin
   m_TagString: Player
@@ -1544,7 +1544,7 @@ MonoBehaviour:
   speedUpParticle: {fileID: 6415371745334724651}
   baseEmissionRate: 10
   maxEmissionMultiplier: 3
---- !u!114 &1378788697695023630
+--- !u!114 &8334925718418576411
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1553,9 +1553,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7352763928063775421}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Script: {fileID: 11500000, guid: 03eae6f0dcdcb3c469ea3ad1c67d643b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  m_EditorClassIdentifier: Assembly-CSharp::OwnerNetworkAnimator
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList:
   - IsCrossFadeExit: 0
