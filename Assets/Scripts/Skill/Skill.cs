@@ -15,6 +15,7 @@ public abstract class Skill : NetworkBehaviour
     {
         return Time.time >= lastUseTime + cooldown;
     }
+
     public float RemainingCooldown
     {
         get
@@ -32,19 +33,36 @@ public abstract class Skill : NetworkBehaviour
             return Mathf.Clamp01(RemainingCooldown / cooldown);
         }
     }
-    public bool TryUse(PlayerController user)
+
+    public void TryUse(PlayerController user)
     {
-        if (!CanUse())
+        if (!IsOwner)
         {
-            Debug.Log("Cool down");
-            return false;
+            TryUseServerRpc(user.NetworkObject.NetworkObjectId);
+            return;
         }
+
+        if (!CanUse()) return;
 
         OnUse(user);
         lastUseTime = Time.time;
-        return true;
+    }
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void TryUseServerRpc(ulong userNetworkObjectId)
+    {
+        if (!IsServer) return;
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(userNetworkObjectId, out var netObj))
+        {
+            PlayerController user = netObj.GetComponent<PlayerController>();
+            if (user != null && CanUse())
+            {
+                OnUse(user);
+                lastUseTime = Time.time;
+            }
+        }
     }
 
     protected abstract void OnUse(PlayerController user);
 }
-
