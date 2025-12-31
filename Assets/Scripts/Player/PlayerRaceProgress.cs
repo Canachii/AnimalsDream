@@ -103,6 +103,7 @@ public class PlayerRaceProgress : NetworkBehaviour
         netLastCheckpointRot.Value = rot;
     }
 
+    [ServerRpc]
     private void ReportCheckpointServerRpc(int index, Vector3 pos, Quaternion rot)
     {
         SetCheckpoint_Server(index, pos, rot);
