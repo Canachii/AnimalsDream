@@ -1,50 +1,25 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerRaceProgress : MonoBehaviour
+public class PlayerRaceProgress : NetworkBehaviour
 {
-    [SerializeField] private RaceManager raceManager;
-    public int lastCheckpointIndex = -1;
-    public Transform lastCheckpointTransform; 
-    public float finishTime;
-    public bool finished;
+    [Header("Checkpoint")]
+    public Transform lastCheckpointTransform;
 
-    public int Rank { get; private set; }
-    public int DeathCount { get; private set; }
+    //서버 권위 데스카운트
+    private readonly NetworkVariable<int> deathCount =
+        new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    private void Awake()
+    //리스폰 중 플래그(중복 트리거/중복 카운트 방지)
+    public readonly NetworkVariable<bool> IsRespawning =
+        new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public int DeathCount => deathCount.Value;
+
+    
+    public void AddDeath_Server(int delta)
     {
-        if (!raceManager)
-        { 
-            raceManager = FindFirstObjectByType<RaceManager>();
-            Debug.Assert(raceManager, "[PlayerRaceProgress] RaceManager reference missing.");
-        }
-        DeathCount = 0;
-    }
-
-
-    private void OnEnable()
-    {
-        raceManager.RegisterPlayer(this);
-        finished = false;
-    }
-    private void OnDisable()
-    {
-        raceManager.UnregisterPlayer(this);
-        finished = false;
-    }
-
-    public void UpdateCheckpoint(int index, Transform transform)
-    {
-        lastCheckpointIndex = index;
-        lastCheckpointTransform = transform;
-    }
-
-    public void SetRank(int rank) => Rank = rank;
-    public void SetDeathCount(int deathCount) => DeathCount += deathCount;
-
-
-    private void Update()
-    {
-        //Debug.Log(name + " Rank: " + Rank);
+        if (!IsServer) return;
+        deathCount.Value += delta;
     }
 }
