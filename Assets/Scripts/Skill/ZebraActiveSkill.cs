@@ -1,6 +1,6 @@
 using System.Collections;
-using Unity.Netcode;
 using UnityEngine;
+using Unity.Netcode;
 
 public class ZebraActiveSkill : Skill
 {
@@ -10,19 +10,19 @@ public class ZebraActiveSkill : Skill
     [SerializeField] private GameObject skillEffectPrefab;
     public float effectScale = 2.0f;
 
-
     protected override void OnUse(PlayerController user)
     {
         Debug.Log($"Skill Activated: {skillName}");
 
-        PlayerInputHandler[] allInputHandler = 
-            FindObjectsByType<PlayerInputHandler>(FindObjectsSortMode.None);
+        PlayerInputHandler[] allInputHandler = FindObjectsByType<PlayerInputHandler>(FindObjectsSortMode.None);
 
         foreach (PlayerInputHandler target in allInputHandler)
         {
             var zebraShield = target.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
+
             if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
                 continue;
+
             StartCoroutine(ApplySkill(target));
 
             SpawnEffectServerRpc(target.transform.position);
@@ -33,29 +33,7 @@ public class ZebraActiveSkill : Skill
     {
         target.ApplyMoveInvert(duration);
 
-        GameObject activeEffect = null;
-        if (skillEffectPrefab != null)
-        {
-            activeEffect = Instantiate(skillEffectPrefab, target.transform);
-            activeEffect.transform.localScale = Vector3.one * effectScale;
-            AudioManager.Instance?.PlayAtPoint(SoundId.Event_ZebraSkill, activeEffect.transform.position);
-        }
-
         yield return new WaitForSeconds(duration);
-        
-        if (activeEffect != null)
-        {
-            ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();
-            if (ps != null)
-            {
-                ps.Stop();
-                Destroy(activeEffect, 2.0f);
-            }
-            else
-            {
-                Destroy(activeEffect);
-            }
-        }
     }
 
     [Rpc(SendTo.Server)]
@@ -69,12 +47,13 @@ public class ZebraActiveSkill : Skill
     {
         if (skillEffectPrefab != null)
         {
-            GameObject effect = Instantiate(skillEffectPrefab, position, Quaternion.identity);
-            effect.transform.localScale = Vector3.one * effectScale;
-            Destroy(effect, 2.0f);
+            GameObject activeEffect = Instantiate(skillEffectPrefab, position, Quaternion.identity);
+
+            activeEffect.transform.localScale = Vector3.one * effectScale;
+
+            AudioManager.Instance?.PlayAtPoint(SoundId.Event_ZebraSkill, position);
+
+            Destroy(activeEffect, 2.0f);
         }
     }
-
-
-
 }
