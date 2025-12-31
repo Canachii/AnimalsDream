@@ -1,8 +1,7 @@
-using System;
+using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
-public class PlayerSkillController : MonoBehaviour
+public class PlayerSkillController : NetworkBehaviour
 {
     [Header("Skills (slot order)")]
     [SerializeField] private Skill[] skills;
@@ -12,17 +11,25 @@ public class PlayerSkillController : MonoBehaviour
     private void Awake()
     {
         owner = GetComponent<PlayerController>();
-
-        if(skills == null ||  skills.Length == 0)
+        if (skills == null || skills.Length == 0)
         {
-            skills = GetComponents<Skill>();   
+            skills = GetComponents<Skill>();
         }
     }
 
     public void UseSkill(int index)
     {
-        Skill skill = skills[index];
-        skill.TryUse(owner);
+        UseSkillServerRpc(index);
+    }
+
+    [ServerRpc]
+    private void UseSkillServerRpc(int index)
+    {
+        if (index >= 0 && index < skills.Length)
+        {
+            Skill skill = skills[index];
+            skill.TryUse(owner);
+        }
     }
 
     public Skill GetSkill(int index)
@@ -33,5 +40,4 @@ public class PlayerSkillController : MonoBehaviour
         }
         return null;
     }
-
 }

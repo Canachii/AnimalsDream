@@ -55,6 +55,8 @@ public class HorsePassiveSkill : Skill
 
     void Update()
     {
+        if (!IsServer) return;
+
         if (activeSkill != null && activeSkill.IsRushing)
         {
             if (currentStack > 0)

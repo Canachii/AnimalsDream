@@ -13,6 +13,12 @@ public class PlayerMovement : NetworkBehaviour
     public float rotationSpeed = 10f;
     private float baseMoveSpeed = 5f;
 
+    public NetworkVariable<float> speedMultiplier = new NetworkVariable<float>(
+        1f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
     [SerializeField] private float groundCheckDistance = 0.3f;
     [SerializeField] private LayerMask groundMask;
 
@@ -30,7 +36,6 @@ public class PlayerMovement : NetworkBehaviour
     public bool IsGrounded { get; private set; } = true;
     private bool isForcedForward = false;
 
-    // Animator parameter hashes
     private static readonly int SpeedHash = Animator.StringToHash("speed");
     private static readonly int IsGroundedHash = Animator.StringToHash("isGrounded");
     private static readonly int JumpHash = Animator.StringToHash("jump");
@@ -51,7 +56,7 @@ public class PlayerMovement : NetworkBehaviour
             if (playerVcam != null)
             {
                 playerVcam.gameObject.SetActive(true);
-                playerVcam.Priority = 10; // 메인 카메라에 붙어있는 Brain이 얘를 선택하도록..
+                playerVcam.Priority = 10;
 
                 GameObject mainCam = GameObject.FindGameObjectWithTag("MainCamera");
                 if (mainCam != null)
@@ -62,7 +67,6 @@ public class PlayerMovement : NetworkBehaviour
         }
         else
         {
-            // 내꺼 아니면 카메라 끄기
             if (playerVcam != null)
             {
                 playerVcam.gameObject.SetActive(false);
@@ -81,7 +85,6 @@ public class PlayerMovement : NetworkBehaviour
         moveInput = input;
     }
 
-    // force forward (horse skill)
     public void SetForcedForward(bool active)
     {
         isForcedForward = active;
@@ -102,11 +105,19 @@ public class PlayerMovement : NetworkBehaviour
                 return;
             }
         }
-        
+
         float speed = isForcedForward ? 1f : moveInput.magnitude;
 
         animator.SetFloat(SpeedHash, speed, 0.1f, Time.deltaTime);
         animator.SetBool(IsGroundedHash, IsGrounded);
+    }
+
+    public void SetMoveSpeedMultiplier(float multiplier)
+    {
+        if (IsServer)
+        {
+            speedMultiplier.Value = multiplier;
+        }
     }
 
     private void FixedUpdate()
@@ -115,7 +126,6 @@ public class PlayerMovement : NetworkBehaviour
 
         Vector3 move;
 
-        // move forward direction camara looking
         if (isForcedForward)
         {
             move = transform.forward;
@@ -145,10 +155,9 @@ public class PlayerMovement : NetworkBehaviour
             rb.MoveRotation(newRot);
         }
 
-        // 이동 처리
-        rb.MovePosition(rb.position + move * moveSpeed * Time.fixedDeltaTime);
+        float finalSpeed = baseMoveSpeed * speedMultiplier.Value;
+        rb.MovePosition(rb.position + move * finalSpeed * Time.fixedDeltaTime);
 
-        // 바닥 체크
         IsGrounded = Physics.Raycast(transform.position + Vector3.up * 0.1f,
                                  Vector3.down,
                                  groundCheckDistance,
@@ -179,10 +188,5 @@ public class PlayerMovement : NetworkBehaviour
 
             animator.SetTrigger(JumpHash);
         }
-    }
-
-    public void SetMoveSpeedMultiplier(float multiplier) // player default speed * multiplier
-    {
-        moveSpeed = baseMoveSpeed * multiplier;
     }
 }

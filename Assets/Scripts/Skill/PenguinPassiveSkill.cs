@@ -42,6 +42,8 @@ public class PenguinPassiveSkill : Skill
 
     void Update()
     {
+        if (!IsServer) return;
+
         UpdateNearbyPlayers();
         ApplySpeedUp();
         UpdateParticleIntensity();
