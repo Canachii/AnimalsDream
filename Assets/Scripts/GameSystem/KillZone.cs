@@ -18,7 +18,7 @@ public class KillZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsServer)
+        if (NetworkManager.Singleton == null)
             return;
 
         if (!other.CompareTag("Player")) return;
