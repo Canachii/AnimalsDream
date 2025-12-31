@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 public class PenguinSkill : Skill
 {
@@ -9,7 +10,6 @@ public class PenguinSkill : Skill
     public float slowRatio = 0.5f;
 
     [Tooltip("Duration (seconds)")]
-    [Min(0f)]
     public float duration = 4f;
 
     public GameObject slowEffectPrefab;
@@ -17,10 +17,7 @@ public class PenguinSkill : Skill
 
     private void OnValidate()
     {
-        if (cooldown <= duration)
-        {
-            cooldown = duration + 5.0f;
-        }
+        if (cooldown <= duration) cooldown = duration + 5.0f;
     }
 
     protected override void OnUse(PlayerController user)
@@ -34,50 +31,61 @@ public class PenguinSkill : Skill
             if (target != user.GetComponent<PlayerMovement>())
             {
                 var zebraShield = target.GetComponentInParent<ZebraPsssiveSkill>();
+
                 if (zebraShield != null && zebraShield.TryBlock(this, user.gameObject))
                     continue;
 
-                StartCoroutine(ApplySlowSafely(target));
+                StartCoroutine(ApplySlowLogic(target));
+
+                SpawnSlowEffectServerRpc(target.transform.position);
             }
         }
     }
 
-    private IEnumerator ApplySlowSafely(PlayerMovement target)
+    private IEnumerator ApplySlowLogic(PlayerMovement target)
     {
-        // Apply slow effect
         target.SetMoveSpeedMultiplier(slowRatio);
 
-        // Spawn effect
-        GameObject activeEffect = null;
-        if (slowEffectPrefab != null)
-        {
-            activeEffect = Instantiate(slowEffectPrefab, target.transform.position, Quaternion.identity, target.transform);
-            activeEffect.transform.localScale = Vector3.one * effectScale;
-            AudioManager.Instance?.PlayAtPoint(SoundId.Event_PenguinSkill, activeEffect.transform.position);
-        }
-
-        // Wait for duration
         yield return new WaitForSeconds(duration);
 
-        // Restore speed
-        if (target != null)
-        {
-            target.SetMoveSpeedMultiplier(1.0f);
-        }
+        if (target != null) target.SetMoveSpeedMultiplier(1.0f);
+    }
 
-        // Remove effect
+    [Rpc(SendTo.Server)]
+    private void SpawnSlowEffectServerRpc(Vector3 position)
+    {
+        SpawnSlowEffectClientRpc(position);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SpawnSlowEffectClientRpc(Vector3 position)
+    {
+        if (slowEffectPrefab != null)
+        {
+            GameObject activeEffect = Instantiate(slowEffectPrefab, position, Quaternion.identity);
+
+            activeEffect.transform.localScale = Vector3.one * effectScale;
+
+            AudioManager.Instance?.PlayAtPoint(SoundId.Event_PenguinSkill, position);
+
+            StartCoroutine(DestroyEffectRoutine(activeEffect, duration));
+        }
+    }
+
+    private IEnumerator DestroyEffectRoutine(GameObject activeEffect, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
         if (activeEffect != null)
         {
             ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();
+
             if (ps != null)
             {
                 ps.Stop();
                 Destroy(activeEffect, 2.0f);
             }
-            else
-            {
-                Destroy(activeEffect);
-            }
+            else Destroy(activeEffect);
         }
     }
 }
