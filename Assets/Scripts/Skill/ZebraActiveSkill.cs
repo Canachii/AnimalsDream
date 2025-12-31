@@ -28,13 +28,10 @@ public class ZebraActiveSkill : Skill
         foreach (PlayerInputHandler target in allInputHandler)
         {
             var targetNetObj = target.GetComponent<NetworkObject>();
-            if (targetNetObj != null && targetNetObj.NetworkObjectId == userId)
-                continue;
+            if (targetNetObj == null) continue;
 
             var zebraShield = target.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
-
-            if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
-                continue;
+            if (zebraShield != null && zebraShield.TryBlock(this, gameObject)) continue;
 
             ApplySkillClientRpc(targetNetObj.NetworkObjectId);
         }
