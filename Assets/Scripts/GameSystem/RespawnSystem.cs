@@ -8,7 +8,6 @@ public class RespawnSystem : NetworkBehaviour
 
     public void DeathAndRespawn(PlayerRaceProgress p)
     {
-        if (!IsServer) return; 
         if (p == null) return;
 
         // 중복 리스폰 방지
