@@ -8725,7 +8725,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   skillName: NMBite
   icon: {fileID: -212665834, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
-  cooldown: 1
+  cooldown: 8
   description: 
   stunDuration: 2
   biteBoxSize: {x: 4, y: 1, z: 3}

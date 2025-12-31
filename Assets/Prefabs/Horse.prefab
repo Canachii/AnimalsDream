@@ -2337,7 +2337,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   skillName: 
   icon: {fileID: -840151881, guid: 4cc09add8e5d7e14a9a805b5062cb28d, type: 3}
-  cooldown: 1
+  cooldown: 10
   description: 
   speedMultiplier: 1.4
   duration: 2

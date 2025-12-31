@@ -1807,7 +1807,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   skillName: 
   icon: {fileID: 806782572, guid: ae84cb74362a4094b8a0409fd5905ef0, type: 3}
-  cooldown: 1
+  cooldown: 12
   description: 
   duration: 4
   skillEffectPrefab: {fileID: 6097779538034126439, guid: 8d570a6bf0c799e4680f52f9c2c447eb, type: 3}
@@ -1831,7 +1831,7 @@ MonoBehaviour:
   cooldown: 1
   description: 
   shileldRenderer: {fileID: 1518157583199451122}
-  rechargeSeconds: 5
+  rechargeSeconds: 25
   startActive: 1
 --- !u!114 &4855932727990753479
 MonoBehaviour:
