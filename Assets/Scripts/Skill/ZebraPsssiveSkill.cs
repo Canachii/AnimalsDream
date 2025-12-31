@@ -5,14 +5,16 @@ using Unity.Netcode;
 public class ZebraPsssiveSkill : Skill
 {
     [Header("Shield Visual")]
-    [SerializeField] private SkinnedMeshRenderer shieldRenderer;
+    [SerializeField] private SkinnedMeshRenderer shileldRenderer;
 
     [Header("Shield Logic")]
     [SerializeField] private float rechargeSeconds = 5f;
     [SerializeField] private bool startActive = true;
 
     private readonly NetworkVariable<bool> isShieldActive = new NetworkVariable<bool>(
-        true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server
+        false,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
     );
 
     public bool IsShieldActive => isShieldActive.Value;
@@ -23,19 +25,25 @@ public class ZebraPsssiveSkill : Skill
     private void Awake()
     {
         owner = GetComponent<PlayerController>();
-        if (shieldRenderer == null) Debug.LogWarning("[ZebraShield] shieldRenderer is not assigned.");
+
+        if (shileldRenderer == null)
+            Debug.LogWarning("[ZebraShield] shileldRenderer is not assigned.");
     }
 
     public override void OnNetworkSpawn()
     {
-        isShieldActive.OnValueChanged += (prev, current) =>
+        isShieldActive.OnValueChanged += OnShieldStateChanged;
+
+        if (IsServer)
         {
-            if (shieldRenderer != null) shieldRenderer.enabled = current;
-        };
+            isShieldActive.Value = startActive;
+        }
+        UpdateShieldVisual(isShieldActive.Value);
+    }
 
-        if (shieldRenderer != null) shieldRenderer.enabled = isShieldActive.Value;
-
-        if (IsServer && startActive) isShieldActive.Value = true;
+    public override void OnNetworkDespawn()
+    {
+        isShieldActive.OnValueChanged -= OnShieldStateChanged;
     }
 
     private void OnDisable()
@@ -46,17 +54,16 @@ public class ZebraPsssiveSkill : Skill
 
     public bool TryBlock(Skill incomingSkill, GameObject attacker)
     {
+        if (!IsServer) return false;
+
         if (!isShieldActive.Value) return false;
 
-        ConsumeServerRpc();
+        Consume();
         return true;
     }
 
-    [Rpc(SendTo.Server)]
-    private void ConsumeServerRpc()
+    private void Consume()
     {
-        if (!isShieldActive.Value) return;
-
         isShieldActive.Value = false;
 
         if (rechargeCo != null) StopCoroutine(rechargeCo);
@@ -68,6 +75,17 @@ public class ZebraPsssiveSkill : Skill
         yield return new WaitForSeconds(rechargeSeconds);
         isShieldActive.Value = true;
         rechargeCo = null;
+    }
+
+    private void OnShieldStateChanged(bool previousValue, bool newValue)
+    {
+        UpdateShieldVisual(newValue);
+    }
+
+    private void UpdateShieldVisual(bool active)
+    {
+        if (shileldRenderer != null)
+            shileldRenderer.enabled = active;
     }
 
     protected override void OnUse(PlayerController user)

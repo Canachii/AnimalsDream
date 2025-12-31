@@ -12,48 +12,81 @@ public class ZebraActiveSkill : Skill
 
     protected override void OnUse(PlayerController user)
     {
+        if (!user.IsOwner) return;
+
         Debug.Log($"Skill Activated: {skillName}");
 
-        PlayerInputHandler[] allInputHandler = FindObjectsByType<PlayerInputHandler>(FindObjectsSortMode.None);
+        RequestSkillServerRpc(user.GetComponent<NetworkObject>().NetworkObjectId);
+    }
+
+    [ServerRpc]
+    private void RequestSkillServerRpc(ulong userId)
+    {
+        PlayerInputHandler[] allInputHandler =
+            FindObjectsByType<PlayerInputHandler>(FindObjectsSortMode.None);
 
         foreach (PlayerInputHandler target in allInputHandler)
         {
+            var targetNetObj = target.GetComponent<NetworkObject>();
+            if (targetNetObj != null && targetNetObj.NetworkObjectId == userId)
+                continue;
+
             var zebraShield = target.gameObject.GetComponentInParent<ZebraPsssiveSkill>();
 
             if (zebraShield != null && zebraShield.TryBlock(this, gameObject))
                 continue;
 
-            StartCoroutine(ApplySkill(target));
+            ApplySkillClientRpc(targetNetObj.NetworkObjectId);
+        }
+    }
 
-            SpawnEffectServerRpc(target.transform.position);
+    [ClientRpc]
+    private void ApplySkillClientRpc(ulong targetId)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetNetObj))
+        {
+            PlayerInputHandler target = targetNetObj.GetComponent<PlayerInputHandler>();
+            if (target != null)
+            {
+                StartCoroutine(ApplySkill(target));
+            }
         }
     }
 
     private IEnumerator ApplySkill(PlayerInputHandler target)
     {
-        target.ApplyMoveInvert(duration);
+        if (target.GetComponent<NetworkObject>().IsOwner)
+        {
+            target.ApplyMoveInvert(duration);
+        }
 
-        yield return new WaitForSeconds(duration);
-    }
-
-    [Rpc(SendTo.Server)]
-    private void SpawnEffectServerRpc(Vector3 position)
-    {
-        SpawnEffectClientRpc(position);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void SpawnEffectClientRpc(Vector3 position)
-    {
+        GameObject activeEffect = null;
         if (skillEffectPrefab != null)
         {
-            GameObject activeEffect = Instantiate(skillEffectPrefab, position, Quaternion.identity);
+            activeEffect = Instantiate(skillEffectPrefab, target.transform);
+
+            activeEffect.transform.localPosition = Vector3.zero;
+            activeEffect.transform.localRotation = Quaternion.identity;
 
             activeEffect.transform.localScale = Vector3.one * effectScale;
 
-            AudioManager.Instance?.PlayAtPoint(SoundId.Event_ZebraSkill, position);
+            AudioManager.Instance?.PlayAtPoint(SoundId.Event_ZebraSkill, target.transform.position);
+        }
 
-            Destroy(activeEffect, 2.0f);
+        yield return new WaitForSeconds(duration);
+
+        if (activeEffect != null)
+        {
+            ParticleSystem ps = activeEffect.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Stop();
+                Destroy(activeEffect, 2.0f);
+            }
+            else
+            {
+                Destroy(activeEffect);
+            }
         }
     }
 }
