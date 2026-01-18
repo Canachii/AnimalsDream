@@ -98,9 +98,9 @@ public class GameFlow : NetworkBehaviour
         while (sec > 0)
         {
             Debug.Log(sec);
-            yield return new WaitForSeconds(1f);
-            sec--;
             netCountdownSec.Value = sec;
+            sec--;
+            yield return new WaitForSeconds(1f);
         }
         netMatchStartTime.Value = NetworkManager.ServerTime.Time;
 

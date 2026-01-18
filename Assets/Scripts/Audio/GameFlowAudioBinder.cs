@@ -15,7 +15,6 @@ public class GameFlowAudioBinder : MonoBehaviour
     {
         if (!gameFlow) return;
 
-        gameFlow.OnCountdownTick += OnTick;
         gameFlow.OnMatchStarted += OnStart;
         gameFlow.OnMatchFinished += OnEnd;
     }
@@ -24,15 +23,10 @@ public class GameFlowAudioBinder : MonoBehaviour
     {
         if (!gameFlow) return;
 
-        gameFlow.OnCountdownTick -= OnTick;
         gameFlow.OnMatchStarted -= OnStart;
         gameFlow.OnMatchFinished -= OnEnd;
     }
 
-    private void OnTick(int sec)
-    {
-        AudioManager.Instance?.Play(SoundId.Race_Countdown);
-    }
 
     private void OnStart()
     {
