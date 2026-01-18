@@ -1,4 +1,6 @@
-﻿using Unity.Netcode;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,7 +22,24 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Text playerListText;
     [SerializeField] private Button startBtn;
 
+    [Header("Game")]
+    [SerializeField] private string gameSceneName = "GameScene";
+    private bool _isGameSceneLoading;
+
     private string _currentJoinCode;
+
+    private void OnEnable()
+    {
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += HandleLoadEventCompleted;
+    }
+
+    private void OnDisable()
+    {
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= HandleLoadEventCompleted;
+    }
+
 
     private void Start()
     {
@@ -88,12 +107,46 @@ public class NetworkManagerUI : MonoBehaviour
 
         startBtn.onClick.AddListener(() =>
         {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                NetworkManager.Singleton.SceneManager.LoadScene("GameScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
-            }
+            if (!NetworkManager.Singleton || !NetworkManager.Singleton.IsServer) return;
+            if (_isGameSceneLoading) return;
+
+            _isGameSceneLoading = true;
+            NetworkManager.Singleton.SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
         });
     }
+
+    private void HandleLoadEventCompleted(string sceneName, LoadSceneMode mode,
+    List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsServer) return;
+        if (!_isGameSceneLoading) return;
+        if (sceneName != gameSceneName) return;
+
+        int connectedCount = NetworkManager.Singleton.ConnectedClientsIds.Count;
+        int completedCount = clientsCompleted != null ? clientsCompleted.Count : 0;
+
+        if (completedCount != connectedCount) return;
+
+        _isGameSceneLoading = false;
+
+        StartCoroutine(CoStartCountdownAfterGameSceneReady());
+    }
+
+    private IEnumerator CoStartCountdownAfterGameSceneReady()
+    {
+        GameFlow gf = null;
+        while (gf == null)
+        {
+            gf = FindFirstObjectByType<GameFlow>();
+            yield return null;
+        }
+
+        while (gf.NetworkObject == null || !gf.NetworkObject.IsSpawned)
+            yield return null;
+
+        gf.StartCountdown(); //모두 로드 완료 후 카운트다운 시작
+    }
+
 
     private void Update()
     {
