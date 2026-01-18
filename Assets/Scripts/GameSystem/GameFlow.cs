@@ -95,11 +95,13 @@ public class GameFlow : NetworkBehaviour
         int sec = Mathf.CeilToInt(countdownSeconds);
         netCountdownSec.Value = sec;
 
+        yield return new WaitForSeconds(0.5f);
+        
         while (sec > 0)
         {
             Debug.Log(sec);
-            netCountdownSec.Value = sec;
             sec--;
+            netCountdownSec.Value = sec;
             yield return new WaitForSeconds(1f);
         }
         netMatchStartTime.Value = NetworkManager.ServerTime.Time;
