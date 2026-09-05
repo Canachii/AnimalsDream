@@ -53,7 +53,7 @@ public class GameHUDController : MonoBehaviour
             gameFlow.OnMatchFinished += SwitchToResultUI;
 
             gameFlow.OnCountdownChanged += HandleCountdownUI;
-
+            
             // 현재값 1회 반영(늦게 초기화되더라도 맞춰짐)
             HandleCountdownUI(gameFlow.CountdownSec);
 

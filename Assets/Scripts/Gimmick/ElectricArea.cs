@@ -30,7 +30,7 @@ public class ElectricArea : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
         if (playerInside) return;
-        AudioManager.Instance?.PlayAtPoint(SoundId.Trap_Warning,  transform.position);
+        AudioManager.Instance?.PlayAtPoint(SoundId.Trap_Warning, other.transform.position);
 
         playerInside = true;
         loop = StartCoroutine(LightningLoop());

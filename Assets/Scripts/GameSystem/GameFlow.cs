@@ -28,16 +28,14 @@ public class GameFlow : NetworkBehaviour
     new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
     public double MatchStartTime => netMatchStartTime.Value;
-
     public MatchState State => netState.Value;
+    public int CountdownSec => netCountdownSec.Value;
 
     public event Action<MatchState> OnStateChanged;
-    public event Action<int> OnCountdownTick; // 3,2,1...
+    public event Action<int> OnCountdownChanged; //UI 갱신용
     public event Action OnMatchStarted;
     public event Action OnMatchFinished;
     public event Action OnReachedGoalLine;
-    public event Action<int> OnCountdownChanged; // 3,2,1,0 매번 UI 갱신용
-    public int CountdownSec => netCountdownSec.Value;
 
 
     public float RemainingTime
@@ -45,13 +43,10 @@ public class GameFlow : NetworkBehaviour
         get
         {
             if (State != MatchState.Playing) return matchTimeLimit;
-
-            // 아직 네트워크가 준비 안 된 경우 대비
             if (NetworkManager == null) return matchTimeLimit;
 
-            double now = NetworkManager.ServerTime.Time;   // 클라에서도 동기화된 서버 시간
+            double now = NetworkManager.ServerTime.Time;
             double elapsed = now - MatchStartTime;
-
             return Mathf.Max(0f, matchTimeLimit - (float)elapsed);
         }
     }
@@ -61,12 +56,6 @@ public class GameFlow : NetworkBehaviour
         // 모든 클라(호스트 포함)에서 동기화 값 변경 감지
         netState.OnValueChanged += HandleStateChanged;
         netCountdownSec.OnValueChanged += HandleCountdownChanged;
-
-        // 씬 로드 후 서버(호스트)에서만 카운트다운 시작
-        if (IsServer && netState.Value == MatchState.Lobby)
-        {
-            StartCountdown();
-        }
 
         // 늦게 들어온 클라도 현재 상태 1번 반영
         OnStateChanged?.Invoke(netState.Value);
@@ -85,26 +74,34 @@ public class GameFlow : NetworkBehaviour
         if (netState.Value != MatchState.Lobby) return;
 
         StopAllCoroutines();
-        StartCoroutine(CoCountdownServer());
-    }
-
-    private IEnumerator CoCountdownServer()
-    {
         SetStateServer(MatchState.Countdown);
 
         int sec = Mathf.CeilToInt(countdownSeconds);
         netCountdownSec.Value = sec;
 
+        PlayCountdownSfxClientRpc();
+
+        StartCoroutine(CoCountdownServer(sec));
+    }
+
+    private IEnumerator CoCountdownServer(int sec)
+    {
+        // 3을 1초 보여주고 2로 내려가도록 1초 대기 후 감소
         while (sec > 0)
         {
-            Debug.Log(sec);
             yield return new WaitForSeconds(1f);
             sec--;
             netCountdownSec.Value = sec;
         }
-        netMatchStartTime.Value = NetworkManager.ServerTime.Time;
 
+        netMatchStartTime.Value = NetworkManager.ServerTime.Time;
         SetStateServer(MatchState.Playing);
+    }
+
+    [ClientRpc]
+    private void PlayCountdownSfxClientRpc()
+    {
+        AudioManager.Instance?.Play(SoundId.Race_Countdown);
     }
 
     public void FinishMatch()
@@ -115,7 +112,6 @@ public class GameFlow : NetworkBehaviour
         SetStateServer(MatchState.Finished);
     }
 
-    // GoalLine은 상황에 따라: 서버에서 판단해서 모두에게 알림
     public void ReachedGoalLine()
     {
         if (IsServer) ReachedGoalLineClientRpc();
@@ -143,9 +139,6 @@ public class GameFlow : NetworkBehaviour
     private void HandleCountdownChanged(int prev, int next)
     {
         OnCountdownChanged?.Invoke(next);
-        // next: 3,2,1,0 으로 떨어짐
-        if (prev <= 0 && next > 0)
-            OnCountdownTick?.Invoke(next);
     }
 
     private void HandleStateChanged(MatchState prev, MatchState next)
